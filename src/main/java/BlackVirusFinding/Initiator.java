@@ -1,12 +1,10 @@
 package BlackVirusFinding;
 
-import CommonBean.BasicNode;
-import CommonBean.NodeBuilder;
+import CommonBean.NodeBean.BasicNode;
+import CommonBean.NodeBean.NodeBuilder;
 import jbotsim.Node;
 import jbotsim.Topology;
 
-import java.awt.*;
-import java.awt.geom.Point2D;
 import java.util.Random;
 
 public class Initiator {

@@ -1,9 +1,8 @@
-package CommonBean;
+package CommonBean.NodeBean;
 
 import jbotsim.Node;
 
 import java.awt.*;
-import java.awt.geom.Point2D;
 
 public class NodeBuilder {
 

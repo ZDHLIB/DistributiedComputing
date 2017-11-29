@@ -1,4 +1,4 @@
-package CommonBean;
+package CommonBean.Agents;
 
 import jbotsim.Node;
 

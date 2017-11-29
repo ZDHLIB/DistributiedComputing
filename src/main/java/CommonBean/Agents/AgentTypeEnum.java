@@ -1,4 +1,4 @@
-package CommonBean;
+package CommonBean.Agents;
 
 public enum AgentTypeEnum {
     BLACKVIRUS("BLACKVIRUS",1),

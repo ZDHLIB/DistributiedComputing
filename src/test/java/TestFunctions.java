@@ -1,11 +1,9 @@
 import BlackVirusFinding.Initiator;
-import CommonBean.*;
+import CommonBean.NodeBean.*;
 import jbotsim.Node;
 import jbotsim.Topology;
 import jbotsim.ui.JViewer;
 import org.junit.Test;
-
-import java.awt.*;
 
 public class TestFunctions {
 

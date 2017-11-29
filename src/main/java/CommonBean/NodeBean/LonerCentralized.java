@@ -1,4 +1,4 @@
-package CommonBean;
+package CommonBean.NodeBean;
 
 import jbotsim.Link;
 import jbotsim.Node;
