@@ -7,11 +7,13 @@ import java.awt.*;
 
 public class BasicNode extends Node {
 
+
+
     @Override
     public void onStart() {
         // initialize the node variables
-        this.setID(0000);
-        this.setColor(new Color(234, 32, 33));
+        setSize(15);
+        System.out.println("BasicNode.....");
     }
 
     @Override
@@ -28,4 +30,6 @@ public class BasicNode extends Node {
     public void onSelection() {
         // what to do when this node is selected by the user
     }
+
+
 }
