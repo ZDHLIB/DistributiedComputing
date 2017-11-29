@@ -39,7 +39,8 @@ public class Initiator {
             NodeBuilder nodeBuilder = new NodeBuilder(BasicNode.class);
             nodeBuilder.buildId(i)
                        .buildWireless(true)
-                       .buildCommunicationRange(width<height?0.5*width:0.5*height);
+                       .buildCommunicationRange(width<height?0.5*width:0.5*height)
+                       .buildResideauDegree();
 
             //Initial leader, explorer, shadow agents at node 0
             //Initial node with black virus
