@@ -1,7 +1,11 @@
+import BlackVirusFinding.Initiator;
 import CommonBean.*;
+import jbotsim.Node;
 import jbotsim.Topology;
 import jbotsim.ui.JViewer;
 import org.junit.Test;
+
+import java.awt.*;
 
 public class TestFunctions {
 
@@ -65,5 +69,25 @@ public class TestFunctions {
         tp.setNodeModel("car", HighwayCar.class);
         new JViewer(tp);
         Thread.sleep(50000);
+    }
+
+    @Test
+    public void testNodeBuilder() throws InterruptedException {
+        NodeBuilder nodeBuilder = new NodeBuilder(BasicNode.class);
+        Node node = nodeBuilder.buildId(1111).build();
+
+        Topology tp = new Topology();
+        tp.addNode(100,100,node);
+        new JViewer(tp);
+        Thread.sleep(50000);
+
+    }
+
+    @Test
+    public void testInitTopology() throws InterruptedException {
+        Topology tp = Initiator.initTopology(10,600,600, true, BasicNode.class);
+        new JViewer(tp);
+        Thread.sleep(50000);
+
     }
 }
