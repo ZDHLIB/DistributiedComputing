@@ -1,22 +1,47 @@
 package CommonBean.NodeBean;
 
+import CommonBean.Agents.AgentTypeEnum;
+import CommonBean.Agents.BlackVirusAgent;
+import CommonBean.Agents.LeaderAgent;
+import CommonBean.Agents.ShadowAgent;
 import jbotsim.Node;
 
 import java.awt.*;
 
 public class NodeBuilder {
 
-    private Node node;
+    private BasicNode node;
 
     public NodeBuilder(Class<? extends Node> var1){
         try {
-            node = var1.newInstance();
+            node = (BasicNode) var1.newInstance();
         } catch (InstantiationException e) {
             e.printStackTrace();
         } catch (IllegalAccessException e) {
             e.printStackTrace();
         }
     }
+
+    public NodeBuilder buildLeaderAgent(){
+        node.setLeaderAgent(new LeaderAgent(AgentTypeEnum.LEADER));
+        return this;
+    }
+
+    public NodeBuilder buildExplorerAgent(){
+        node.setExplorerAgent(new LeaderAgent(AgentTypeEnum.EXPLORER));
+        return this;
+    }
+
+    public NodeBuilder buildShadowAgent(){
+        node.setShadowAgent(new ShadowAgent(AgentTypeEnum.LEADER));
+        return this;
+    }
+
+    public NodeBuilder buildBlackVirusAgent(){
+        node.setBlackVirusAgent(new ShadowAgent(AgentTypeEnum.BLACKVIRUS));
+        return this;
+    }
+
 
     public NodeBuilder buildId(Integer id){
         node.setID(id);
