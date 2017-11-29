@@ -42,6 +42,13 @@ public class NodeBuilder {
         return this;
     }
 
+    public NodeBuilder buildResideauDegree(){
+        for(Node n : node.getNeighbors()){
+            node.addRasideauDegree(n);
+        }
+        return this;
+    }
+
 
     public NodeBuilder buildId(Integer id){
         node.setID(id);
