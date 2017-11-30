@@ -1,44 +1,48 @@
 package CommonBean.Agents;
 
+import CommonBean.NodeBean.BasicNode;
 import jbotsim.Node;
 
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 public class ExporerAgent extends Agent {
 
-    private int source = 0;
-    private int target = 0;
-    private ArrayList<Integer> targetNeigs = new ArrayList<Integer>();
+    private Node source = null;
+    private Node target = null;
+    private HashMap<Integer, Node> targetNeigs = new HashMap<Integer, Node>();
 
     public ExporerAgent(AgentTypeEnum type){
         this.type = type;
     }
 
 
-    public ArrayList<Integer> getTargetNeigs() {
+    public HashMap<Integer, Node> getTargetNeigs() {
         return targetNeigs;
     }
 
-    public void setTargetNeigs(ArrayList<Node> neigs) {
+    public void setTargetNeigs(HashMap<Integer, Node> neigs) {
         targetNeigs.clear();
-        for(Node node:neigs){
-            targetNeigs.add(node.getID());
+        for(Map.Entry entry : neigs.entrySet()){
+            targetNeigs.put( (Integer) entry.getKey(), (BasicNode) entry.getValue());
         }
     }
 
-    public int getSource() {
+    public Node getSource() {
         return source;
     }
 
-    public void setSource(int source) {
+    public void setSource(Node source) {
         this.source = source;
     }
 
-    public int getTarget() {
+    public Node getTarget() {
         return target;
     }
 
-    public void setTarget(int target) {
+    public void setTarget(Node target) {
         this.target = target;
     }
 }
