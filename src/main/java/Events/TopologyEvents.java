@@ -41,10 +41,6 @@ public class TopologyEvents implements TopologyListener, ConnectivityListener, S
     }
 
     public void onSelection(Node node) {
-        logger.info("Select node : {}",node.getID());
-        //sink node is 0, if it's clicked, start the algorithm
-        if( node.getID() == 0){
 
-        }
     }
 }
