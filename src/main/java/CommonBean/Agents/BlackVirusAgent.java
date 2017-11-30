@@ -9,11 +9,23 @@ public class BlackVirusAgent extends Agent {
     private int target = 0;
     private ArrayList<Integer> targetNeigs = new ArrayList<Integer>();
     private ArrayList<BlackVirusAgent> clones = new ArrayList<BlackVirusAgent>();
+    private static BlackVirusAgent blackVirusAgent = null;
 
-    public BlackVirusAgent(AgentTypeEnum type){
+    private BlackVirusAgent(AgentTypeEnum type){
         this.type = type;
     }
 
+    public static BlackVirusAgent getInstance(){
+        if(blackVirusAgent == null){
+            synchronized (BlackVirusAgent.class){
+                if(blackVirusAgent == null){
+                    blackVirusAgent = new BlackVirusAgent(AgentTypeEnum.BLACKVIRUS);
+                    return blackVirusAgent;
+                }
+            }
+        }
+        return blackVirusAgent;
+    }
 
     public int getTarget() {
         return target;
