@@ -20,25 +20,13 @@ public class NodeBuilder {
     }
 
     public NodeBuilder buildLeaderAgent(){
-        node.setLeaderAgent(new LeaderAgent(AgentTypeEnum.LEADER));
+        node.setLeaderAgent(LeaderAgent.getInstance());
         return this;
     }
 
-    public NodeBuilder buildExplorerAgent(Integer id){
-        ExporerAgent explorerAgent = new ExporerAgent(AgentTypeEnum.EXPLORER);
-        explorerAgent.setSource(id);
-        node.setExplorerAgent(explorerAgent);
-        return this;
-    }
-
-    public NodeBuilder buildShadowAgent(){
-
-        node.setShadowAgent(new ShadowAgent(AgentTypeEnum.LEADER));
-        return this;
-    }
 
     public NodeBuilder buildBlackVirusAgent(){
-        node.setBlackVirusAgent(new ShadowAgent(AgentTypeEnum.BLACKVIRUS));
+        node.setBlackVirusAgent(BlackVirusAgent.getInstance());
         return this;
     }
 
