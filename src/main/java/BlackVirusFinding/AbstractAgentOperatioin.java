@@ -1,8 +1,11 @@
 package BlackVirusFinding;
 
 import CommonBean.NodeBean.BasicNode;
+import jbotsim.Node;
+
+import java.util.HashMap;
 
 public abstract class AbstractAgentOperatioin {
 
-    public abstract void chooseTarget(BasicNode Node);
+    public abstract BasicNode chooseTarget(HashMap<Integer, Node> frontiersMap);
 }
