@@ -23,7 +23,7 @@ public class LeaderAgent extends Agent {
         this.type = type;
     }
 
-    public LeaderAgent getInstance(){
+    public static LeaderAgent getInstance(){
         if(leaderAgent == null){
             synchronized (LeaderAgent.class){
                 if(leaderAgent == null){
