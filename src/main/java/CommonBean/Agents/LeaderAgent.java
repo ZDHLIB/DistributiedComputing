@@ -1,12 +1,12 @@
 package CommonBean.Agents;
 
 import BlackVirusFinding.Initiator;
+import CommonBean.NodeBean.BasicNode;
 import jbotsim.Node;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.util.ArrayList;
-import java.util.HashMap;
+import java.util.*;
 
 public class LeaderAgent extends Agent {
 
@@ -17,7 +17,7 @@ public class LeaderAgent extends Agent {
     private HashMap<Integer,Node> exploredMap = new HashMap<Integer, Node>();
 
     //This is the frontiers, if a node is explored, it should be moved
-    private HashMap<Integer,HashMap<Integer, Node> > hop2Neighbours = new HashMap<Integer, HashMap<Integer, Node>>();
+    private HashMap<Node,HashMap<Integer, Node> > hop2Neighbours = new HashMap<Node, HashMap<Integer, Node>>();
 
     private LeaderAgent(AgentTypeEnum type){
         this.type = type;
@@ -45,13 +45,25 @@ public class LeaderAgent extends Agent {
         return false;
     }
 
-    public void addHop2Neighbours(Integer id, ArrayList<Node> nodes){
-        if(!hop2Neighbours.containsKey(id)){
-            HashMap<Integer, Node> neigs = new HashMap<Integer, Node>();
-            for(Node node:nodes){
-                neigs.put(node.getID(),node);
-            }
+    public void addHop2Neighbours(Node id, HashMap<Integer,Node> neigs){
+        if(!hop2Neighbours.containsKey(id) && neigs.size() > 0){
             hop2Neighbours.put(id, neigs);
         }
     }
+
+    /**
+     * filter nodes with 0 residual degree
+     */
+    public void updateHop2Neighbours(){
+
+        Iterator<Node> iter = this.hop2Neighbours.keySet().iterator();
+        BasicNode n = null;
+        while(iter.hasNext()){
+            n = (BasicNode) iter.next();
+            if( n.getRasideauDegree().size() <= 0 ) {
+                iter.remove();
+            }
+        }
+    }
+
 }
