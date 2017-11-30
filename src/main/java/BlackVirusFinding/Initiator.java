@@ -47,9 +47,8 @@ public class Initiator {
             if(i == 0){
                 nodeBuilder.buildColor(new Color(123, 27, 7));
                 nodeBuilder.buildBlackVirusAgent()
-                            .buildLeaderAgent()
-                            .buildShadowAgent()
-                            .buildExplorerAgent(0);
+                           .buildLeaderAgent();
+
             } else if(i == blackVirusNode) {
                 nodeBuilder.buildColor(new Color(0, 0, 0));
                 nodeBuilder.buildBlackVirusAgent();
