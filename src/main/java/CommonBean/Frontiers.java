@@ -3,20 +3,17 @@ package CommonBean;
 import CommonBean.NodeBean.BasicNode;
 import jbotsim.Node;
 
-import java.util.HashMap;
-import java.util.LinkedList;
-import java.util.Map;
-import java.util.Queue;
+import java.util.*;
 
 public class Frontiers {
 
     private static Frontiers frontiers;
-    private static Queue<Node> queue = new LinkedList<Node>();
+    private static ArrayList<Node> inFrontiers = new ArrayList<Node>();
     private static HashMap<Integer, Node> frontiersMap = new HashMap<Integer, Node>();
 
     private Frontiers(){}
 
-    public Frontiers getInstance(){
+    public static Frontiers getInstance(){
         if(frontiers == null){
             synchronized (Frontiers.class){
                 if(frontiers == null){
@@ -28,18 +25,33 @@ public class Frontiers {
         return frontiers;
     }
 
-    public void addQueue(Node node){
-        queue.offer(node);
+    public void addInFrontiers(Node node){
+        inFrontiers.add(node);
     }
 
     public void updateFrontiers(){
-        for(Node node : queue){
-            BasicNode n = (BasicNode) node;
+        ArrayList<Integer> removeList = new ArrayList<Integer>();
+        for(int i = 0; i < inFrontiers.size(); i++){
+            BasicNode n = (BasicNode) inFrontiers.get(i);
             HashMap<Integer, Node> rd = n.getRasideauDegree();
-            for(HashMap.Entry entity : rd.entrySet()){
-
+            if(rd.size()>0) {
+                for (HashMap.Entry entity : rd.entrySet()) {
+                    if(!frontiersMap.containsKey(entity.getKey())){
+                        frontiersMap.put((Integer)entity.getKey(),(Node)entity.getValue());
+                    }
+                }
+            }else{
+                removeList.add(i);
             }
         }
+        for(Integer i : removeList){
+            inFrontiers.remove(i);
+        }
     }
+
+    public static HashMap<Integer, Node> getFrontiersMap() {
+        return frontiersMap;
+    }
+
 
 }
