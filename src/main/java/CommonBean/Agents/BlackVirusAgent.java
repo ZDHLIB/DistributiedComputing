@@ -3,6 +3,7 @@ package CommonBean.Agents;
 import jbotsim.Node;
 
 import java.util.ArrayList;
+import java.util.List;
 
 public class BlackVirusAgent extends Agent {
 
@@ -39,7 +40,7 @@ public class BlackVirusAgent extends Agent {
         return targetNeigs;
     }
 
-    public void setTargetNeigs(ArrayList<Node> neigs) {
+    public void setTargetNeigs(List<Node> neigs) {
         targetNeigs.clear();
         clones.clear();
         for(Node node:neigs){
@@ -49,5 +50,9 @@ public class BlackVirusAgent extends Agent {
                 clones.add(new BlackVirusAgent(AgentTypeEnum.CLONESVIRUS));
             }
         }
+    }
+
+    public ArrayList<BlackVirusAgent> getClones(){
+        return this.clones;
     }
 }
