@@ -1,9 +1,6 @@
 package CommonBean.NodeBean;
 
-import CommonBean.Agents.AgentTypeEnum;
-import CommonBean.Agents.BlackVirusAgent;
-import CommonBean.Agents.LeaderAgent;
-import CommonBean.Agents.ShadowAgent;
+import CommonBean.Agents.*;
 import jbotsim.Node;
 
 import java.awt.*;
@@ -27,12 +24,15 @@ public class NodeBuilder {
         return this;
     }
 
-    public NodeBuilder buildExplorerAgent(){
-        node.setExplorerAgent(new LeaderAgent(AgentTypeEnum.EXPLORER));
+    public NodeBuilder buildExplorerAgent(Integer id){
+        ExporerAgent explorerAgent = new ExporerAgent(AgentTypeEnum.EXPLORER);
+        explorerAgent.setSource(id);
+        node.setExplorerAgent(explorerAgent);
         return this;
     }
 
     public NodeBuilder buildShadowAgent(){
+
         node.setShadowAgent(new ShadowAgent(AgentTypeEnum.LEADER));
         return this;
     }
