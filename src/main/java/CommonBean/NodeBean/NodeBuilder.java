@@ -63,7 +63,7 @@ public class NodeBuilder {
         return this;
     }
 
-    public Node build(){
+    public BasicNode build(){
         return node;
     }
 
