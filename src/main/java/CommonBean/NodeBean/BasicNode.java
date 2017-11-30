@@ -47,7 +47,6 @@ public class BasicNode extends Node {
         //String: visited message
         if( obj instanceof Integer ){
             greedyBasedFacade.updateResidualDegree(this, obj);
-
         }
         // Receive explorerAgent, check whether I have been visited or not
         else if( obj instanceof ExporerAgent ){
@@ -70,10 +69,27 @@ public class BasicNode extends Node {
                 greedyBasedFacade.returnExplorerAgent(this, obj);
             }
 
-        } else if( obj instanceof BlackVirusAgent){
-
+        }
+        // Receive black virus's clone
+        else if( obj instanceof BlackVirusAgent){
+            BlackVirusAgent cloneVirusAgent = (BlackVirusAgent) obj;
+            if( cloneVirusAgent.getType().equals(AgentTypeEnum.CLONESVIRUS) ){
+                // I have been protected by shadowAgent, so deactivate receiving clones
+                if( this.shadowAgent != null ){
+                    cloneVirusAgent.setActivate(false);
+                }
+                // I am a unexplored node, so destroyed by clones
+                else {
+                    this.blackVirusAgent = cloneVirusAgent;
+                }
+            }
         } else if( obj instanceof ShadowAgent ){
-
+            // if I have been destroyed by clones and clone is active, then deactivate clones
+            if( this.blackVirusAgent != null
+                    && this.blackVirusAgent.getActivate()
+                    && this.blackVirusAgent.getType().equals(AgentTypeEnum.CLONESVIRUS)){
+                this.blackVirusAgent.setActivate(false);
+            }
         }
     }
 
