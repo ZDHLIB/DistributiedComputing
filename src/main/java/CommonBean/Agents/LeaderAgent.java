@@ -1,8 +1,6 @@
 package CommonBean.Agents;
 
-import BlackVirusFinding.Initiator;
 import CommonBean.NodeBean.BasicNode;
-import jbotsim.Node;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -12,14 +10,14 @@ public class LeaderAgent extends Agent {
 
     private final static Logger logger = LoggerFactory.getLogger(LeaderAgent.class);
 
-    private static int stepAssign = 0;
     private static LeaderAgent leaderAgent = null;
     private BasicNode target = null;
-    private HashMap<Integer,Node> exploredMap = new HashMap<Integer, Node>();
-    private ArrayList<ShadowAgent> shadowAgents = new ArrayList<ShadowAgent>();
+    private BasicNode currentNode = null;
+    private HashMap<BasicNode, ArrayList<BasicNode> > hop2Info = new HashMap<BasicNode, ArrayList<BasicNode> >();
+    private ArrayList<ShadowAgent>  shadowPosition = new ArrayList<ShadowAgent>();
+    private ArrayList<BasicNode> protectedNodes = new ArrayList<BasicNode>();
+    private ArrayList<BasicNode> exploredMap = new ArrayList<BasicNode>();
 
-    //This is the frontiers, if a node is explored, it should be moved
-    private HashMap<Node,HashMap<Integer, Node> > hop2Neighbours = new HashMap<Node, HashMap<Integer, Node>>();
 
     private LeaderAgent(AgentTypeEnum type){
         this.type = type;
@@ -37,60 +35,51 @@ public class LeaderAgent extends Agent {
         return leaderAgent;
     }
 
-    public boolean addNewNode(Node node){
-        if(exploredMap.containsKey(node.getID())){
-            logger.info("{} has already explored.", node.getID());
-        }else{
-            exploredMap.put(node.getID(),node);
-            return true;
-        }
-        return false;
+    /**
+     * leaderAgetn moves to neighbour of target
+     * @param source
+     */
+    public void move2Source(BasicNode source){
+        source.setLeaderAgent(leaderAgent);
+        currentNode.setLeaderAgent(null);
     }
 
-    public void addHop2Neighbours(Node id, HashMap<Integer,Node> neigs){
-        if(!hop2Neighbours.containsKey(id) && neigs.size() > 0){
-            hop2Neighbours.put(id, neigs);
-        }
+    public void addNewNode(BasicNode node){
+        exploredMap.add(node);
     }
 
     /**
-     * filter nodes with 0 residual degree
+     * update frontiers
+     * @param node
+     * @param neighbours
      */
-    public void updateHop2Neighbours(){
-
-        Iterator<Node> iter = this.hop2Neighbours.keySet().iterator();
+    public void updateHop2Info( BasicNode node, ArrayList<BasicNode> neighbours ){
+        if( neighbours.size() > 0 ){
+            hop2Info.put(node, neighbours);
+        }
+        Iterator<BasicNode> iter = hop2Info.keySet().iterator();
         BasicNode n = null;
         while(iter.hasNext()){
-            n = (BasicNode) iter.next();
-            if( n.getRasideauDegree().size() <= 0 ) {
+            n = iter.next();
+            if( n.getRasidualNodes().size() <= 0 ){
                 iter.remove();
             }
         }
     }
 
-
-    public HashMap<Node,HashMap<Integer, Node> > getHop2Neighbours(){
-        return hop2Neighbours;
-    }
-
-    public ArrayList<ShadowAgent> getShadowAgents() {
-        return shadowAgents;
-    }
-
-    public void addShadowAgent(ShadowAgent shadowAgent) {
-        this.shadowAgents.add(shadowAgent);
-    }
-
-    public int getStepAssign() {
-        return stepAssign;
-    }
-
-    public void addStepAssign(){
-        this.stepAssign += 1;
-    }
-
-    public void resetStepAssign(){
-        this.stepAssign = 0;
+    /**
+     * update the nodes should be protected
+     * @param node
+     */
+    public void addProtectNode(BasicNode node){
+        protectedNodes.add(node);
+        if( protectedNodes.size() > shadowPosition.size() ){
+            int diff = protectedNodes.size() - shadowPosition.size();
+            for(int i = 0; i < diff; i++){
+                ShadowAgent shadowAgent = new ShadowAgent(AgentTypeEnum.CLEANER);
+                shadowPosition.add(shadowAgent);
+            }
+        }
     }
 
     public BasicNode getTarget() {
@@ -99,5 +88,45 @@ public class LeaderAgent extends Agent {
 
     public void setTarget(BasicNode target) {
         this.target = target;
+    }
+
+    public BasicNode getCurrentNode() {
+        return currentNode;
+    }
+
+    public void setCurrentNode(BasicNode currentNode) {
+        this.currentNode = currentNode;
+    }
+
+    public HashMap<BasicNode, ArrayList<BasicNode>> getHop2Info() {
+        return hop2Info;
+    }
+
+    public void setHop2Info(HashMap<BasicNode, ArrayList<BasicNode>> hop2Info) {
+        this.hop2Info = hop2Info;
+    }
+
+    public ArrayList<ShadowAgent> getShadowPosition() {
+        return shadowPosition;
+    }
+
+    public void setShadowPosition(ArrayList<ShadowAgent> shadowPosition) {
+        this.shadowPosition = shadowPosition;
+    }
+
+    public ArrayList<BasicNode> getProtectedNodes() {
+        return protectedNodes;
+    }
+
+    public void setProtectedNodes(ArrayList<BasicNode> protectedNodes) {
+        this.protectedNodes = protectedNodes;
+    }
+
+    public ArrayList<BasicNode> getExploredMap() {
+        return exploredMap;
+    }
+
+    public void setExploredMap(ArrayList<BasicNode> exploredMap) {
+        this.exploredMap = exploredMap;
     }
 }
