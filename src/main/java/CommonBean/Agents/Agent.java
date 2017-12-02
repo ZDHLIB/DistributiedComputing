@@ -9,7 +9,7 @@ public abstract class Agent{
         return this.type;
     }
 
-    public boolean getActivate(){
+    public boolean isActivate(){
         return this.activate;
     }
 
