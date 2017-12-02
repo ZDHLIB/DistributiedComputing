@@ -8,8 +8,7 @@ import jbotsim.Topology;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.awt.*;
-import java.util.HashMap;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
 
@@ -48,18 +47,19 @@ public class Initiator {
             //Initial leader, explorer, shadow agents at node 0
             //Initial node with black virus
             if(i == 0){
-                nodeBuilder.buildColor(new Color(123, 27, 7));
+//                nodeBuilder.buildColor(new Color(123, 27, 7));
                 nodeBuilder.buildLeaderAgent();
                 node = nodeBuilder.build();
+                node.setExplored(true);
+                LeaderAgent.getInstance().setCurrentNode(node);
             } else if(i == blackVirusNode) {
-                nodeBuilder.buildColor(new Color(0, 0, 0));
+//                nodeBuilder.buildColor(new Color(0, 0, 0));
                 nodeBuilder.buildBlackVirusAgent();
                 node = nodeBuilder.build();
             } else {
                 node = nodeBuilder.build();
             }
-
-
+            //Random the position
             int x = random.nextInt(width);
             int y = random.nextInt(height);
             tp.addNode(x,y,node);
@@ -67,27 +67,17 @@ public class Initiator {
 
         initResidualDegree(tp);
 
-        logger.info("Initial topology finished...");
+        logger.info("Initial topology finished. Sink: 0, blackVirus: {}", blackVirusNode);
         return tp;
     }
 
-
-    private static void initSink(BasicNode node){
-
-        LeaderAgent.getInstance().addNewNode(node);
-        HashMap<Integer, Node> neigs = new HashMap<Integer, Node>();
-        for(Node n : node.getNeighbors()){
-            neigs.put(n.getID(), n);
-        }
-        LeaderAgent.getInstance().addHop2Neighbours(node, neigs);
-    }
 
     public static void initResidualDegree(Topology tp){
         List<Node> nodeList = tp.getNodes();
 
         for(Node node : nodeList){
             BasicNode basicNode = (BasicNode) node;
-            basicNode.getRasideauDegree().clear();
+            basicNode.getRasidualNodes().clear();
             for( Node n2 : basicNode.getNeighbors()) {
                 basicNode.addRasideauDegree(n2);
             }
@@ -97,6 +87,16 @@ public class Initiator {
         }
     }
 
+
+    private static void initSink(BasicNode node){
+
+        LeaderAgent.getInstance().addNewNode(node);
+        ArrayList<BasicNode> neigs = new ArrayList<BasicNode>();
+        for(Node n : node.getNeighbors()){
+            neigs.add((BasicNode) n);
+        }
+        LeaderAgent.getInstance().updateHop2Info(node, neigs);
+    }
 
 
 }
