@@ -27,4 +27,12 @@ public abstract class AbstractAgentOperatioin {
         }
         return null;
     }
+
+
+    public static void sendVisited2Neighbours(BasicNode node, List<Node> neighbours){
+        for(Node n : neighbours){
+            BasicNode bn = (BasicNode) n;
+            node.send(bn, node.getID());
+        }
+    }
 }
