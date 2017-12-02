@@ -15,7 +15,7 @@ public class LeaderAgent extends Agent {
     private BasicNode currentNode = null;
     private HashMap<BasicNode, ArrayList<BasicNode> > hop2Info = new HashMap<BasicNode, ArrayList<BasicNode> >();
     private ArrayList<ShadowAgent>  shadowPosition = new ArrayList<ShadowAgent>();
-    private ArrayList<BasicNode> protectedNodes = new ArrayList<BasicNode>();
+    private Queue<BasicNode> protectedNodes = new LinkedList<BasicNode>();
     private ArrayList<BasicNode> exploredMap = new ArrayList<BasicNode>();
 
 
@@ -72,7 +72,7 @@ public class LeaderAgent extends Agent {
      * @param node
      */
     public void addProtectNode(BasicNode node){
-        protectedNodes.add(node);
+        protectedNodes.offer(node);
         if( protectedNodes.size() > shadowPosition.size() ){
             int diff = protectedNodes.size() - shadowPosition.size();
             for(int i = 0; i < diff; i++){
@@ -80,6 +80,13 @@ public class LeaderAgent extends Agent {
                 shadowPosition.add(shadowAgent);
             }
         }
+    }
+
+    public BasicNode getNextProtectNode(){
+        if( !protectedNodes.isEmpty() ) {
+            return protectedNodes.poll();
+        }
+        return null;
     }
 
     public BasicNode getTarget() {
@@ -114,11 +121,11 @@ public class LeaderAgent extends Agent {
         this.shadowPosition = shadowPosition;
     }
 
-    public ArrayList<BasicNode> getProtectedNodes() {
+    public Queue<BasicNode> getProtectedNodes() {
         return protectedNodes;
     }
 
-    public void setProtectedNodes(ArrayList<BasicNode> protectedNodes) {
+    public void setProtectedNodes(Queue<BasicNode> protectedNodes) {
         this.protectedNodes = protectedNodes;
     }
 
