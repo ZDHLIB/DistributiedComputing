@@ -1,23 +1,24 @@
 package CommonBean.Agents;
 
+import CommonBean.NodeBean.BasicNode;
 import jbotsim.Node;
 
 import java.util.ArrayList;
 
 public class ShadowAgent extends Agent {
 
-    private int target = 0;
+    private BasicNode target = null;
 
     public ShadowAgent(AgentTypeEnum type){
         this.type = type;
     }
 
 
-    public int getTarget() {
+    public BasicNode getTarget() {
         return target;
     }
 
-    public void setTarget(int target) {
+    public void setTarget(BasicNode target) {
         this.target = target;
     }
     
