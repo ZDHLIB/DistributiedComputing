@@ -6,6 +6,7 @@ import jbotsim.Message;
 import jbotsim.Node;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import sun.security.provider.SHA;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -17,8 +18,8 @@ public class BasicNode extends Node {
     private final static Logger logger = LoggerFactory.getLogger(BasicNode.class);
 
     private boolean explored = false;
-    private BlackVirusAgent blackVirusAgent = null;
-    private LeaderAgent leaderAgent = null;
+    private BlackVirusAgent blackVirusAgent = BlackVirusAgent.getInstance();
+    private LeaderAgent leaderAgent = LeaderAgent.getInstance();
     private ShadowAgent shadowAgent = null;
     private HashMap<Integer,Node > rasideauDegree = new HashMap<Integer, Node>();
 
@@ -42,10 +43,16 @@ public class BasicNode extends Node {
 
     @Override
     public void onMessage(Message message) {
+        //Destination is not me, forward it
+        if( message.getDestination() != this ){
+            send(message.getDestination(), message);
+            return;
+        }
         // processing of a received message
         Object obj = message.getContent();
         //String: visited message
         if( obj instanceof Integer ){
+            logger.info("{} Receive visited message from {}", getID(), obj);
             greedyBasedFacade.updateResidualDegree(this, obj);
         }
         // Receive explorerAgent, check whether I have been visited or not
@@ -89,6 +96,31 @@ public class BasicNode extends Node {
                     && this.blackVirusAgent.getActivate()
                     && this.blackVirusAgent.getType().equals(AgentTypeEnum.CLONESVIRUS)){
                 this.blackVirusAgent.setActivate(false);
+            } else {
+                if( this.leaderAgent != null ) {
+                    // leaderAgent will go to next stop
+
+                }
+                this.shadowAgent = (ShadowAgent) obj;
+            }
+        } else if( obj instanceof LeaderAgent ){
+            LeaderAgent leaderAgent = (LeaderAgent) obj;
+            if( this.shadowAgent != null ){
+                // leaderAgent will go to next stop and assign a shadow agent to next stop
+                leaderAgent.addStepAssign();
+                send( leaderAgent.getShadowAgents().get(leaderAgent.getStepAssign()).getTarget(),
+                        leaderAgent.getShadowAgents().get(leaderAgent.getStepAssign()) );
+                send( leaderAgent.getShadowAgents().get(leaderAgent.getStepAssign()).getTarget(),
+                        leaderAgent);
+            }
+            //protection finished, send explorer to target
+            else if( leaderAgent.getShadowAgents().size() == leaderAgent.getStepAssign() ){
+                this.leaderAgent = leaderAgent;
+                leaderAgent.resetStepAssign();
+                ExporerAgent exporerAgent = ExporerAgent.getInstance();
+                exporerAgent.setSource(this);
+                exporerAgent.setTarget(this.leaderAgent.getTarget());
+                send(this.leaderAgent.getTarget(), ExporerAgent.getInstance());
             }
         }
     }
@@ -121,7 +153,7 @@ public class BasicNode extends Node {
         this.blackVirusAgent = blackVirusAgent;
     }
 
-    public Agent getLeaderAgent() {
+    public LeaderAgent getLeaderAgent() {
         return leaderAgent;
     }
 
