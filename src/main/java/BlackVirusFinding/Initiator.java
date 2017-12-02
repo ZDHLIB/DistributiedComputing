@@ -21,7 +21,7 @@ public class Initiator {
      * @param n  # of nodes
      * @param width   # width of topology
      * @param height    # height of topology
-     * @param start   # whether start the clock at the beginning
+     * @param start   # whether startExplorer the clock at the beginning
      * @param var1    # node model of topology
      * @return
      */
@@ -30,6 +30,7 @@ public class Initiator {
 
         BasicNode node = null;
         Random random = new Random();
+        LeaderAgent.getInstance().clear();
         Topology tp = new Topology(width,height,start);
         tp.setDefaultNodeModel(var1);
 
@@ -88,14 +89,14 @@ public class Initiator {
     }
 
 
-    private static void initSink(BasicNode node){
+    private static void initSink(BasicNode sinkNode){
 
-        LeaderAgent.getInstance().addNewNode(node);
+        LeaderAgent.getInstance().addNewNode(sinkNode);
         ArrayList<BasicNode> neigs = new ArrayList<BasicNode>();
-        for(Node n : node.getNeighbors()){
+        for(Node n : sinkNode.getNeighbors()){
             neigs.add((BasicNode) n);
         }
-        LeaderAgent.getInstance().updateHop2Info(node, neigs);
+        LeaderAgent.getInstance().updateHop2Info(sinkNode,neigs);
     }
 
 
