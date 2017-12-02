@@ -1,28 +1,52 @@
 package BlackVirusFinding;
 
-import CommonBean.Agents.BlackVirusAgent;
-import CommonBean.Agents.ExporerAgent;
-import CommonBean.Agents.LeaderAgent;
-import CommonBean.Frontiers;
+import CommonBean.Agents.*;
 import CommonBean.NodeBean.BasicNode;
 import jbotsim.Node;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 public class GreedyBasedFacade {
 
+    private final static Logger logger = LoggerFactory.getLogger(GreedyBasedFacade.class);
 
     private LeaderAgent leaderAgent = LeaderAgent.getInstance();
+    private GreedyBasedAgentOperatioin greedyBasedAgentOperatioin = new GreedyBasedAgentOperatioin();
 
     /**
      * Start one iteration of the greedy based algorithm
      */
     public void start(){
+        //1. Choose target
+        ArrayList<BasicNode> pair = greedyBasedAgentOperatioin.chooseTarget();
+        BasicNode source = pair.get(0);
+        BasicNode target = pair.get(1);
+        leaderAgent.setTarget(target);
+        leaderAgent.move2Source(source);
+        logger.info("Choose source: {}, Choose target: {} with explored flag: {}",
+                source.getID(), target.getID(), target.isExplored());
+
+        //2. Protect explored neighbours of target
+        ArrayList<BasicNode> exploredNeigs = greedyBasedAgentOperatioin.getExploredNeighbours(target);
+
+        //3. Assign shadow agents to explored neighbours
+        greedyBasedAgentOperatioin.startProtectExploredNeighbours(source, exploredNeigs);
 
     }
+
+
+//    public void eliminate(BasicNode node, HashMap<Integer, Node> residualNeigs){
+//        LeaderAgent leaderAgent = LeaderAgent.getInstance();
+//        for(Map.Entry entry : residualNeigs.entrySet()){
+//            BasicNode n = (BasicNode) entry.getValue();
+//            ShadowAgent shadowAgent = new ShadowAgent(AgentTypeEnum.CLEANER);
+//            leaderAgent.addShadowAgent(shadowAgent);
+//            n.send(n, shadowAgent);
+//        }
+//    }
+
 
     /**
      * Receive visited message, update its own residual degree
@@ -30,8 +54,14 @@ public class GreedyBasedFacade {
      */
     public void updateResidualDegree(BasicNode node, Object obj){
         Integer visited = (Integer) obj;
-        if(node.getRasideauDegree().containsKey(visited)){
-            node.getRasideauDegree().remove(visited);
+        ArrayList<BasicNode> neigs = node.getRasidualNodes();
+        Iterator<BasicNode> iterator = neigs.iterator();
+        while(iterator.hasNext()){
+            Integer id = iterator.next().getID();
+            if( id.equals(visited) ){
+                iterator.remove();
+                return;
+            }
         }
     }
 
@@ -43,7 +73,7 @@ public class GreedyBasedFacade {
     public void returnExplorerAgent(BasicNode node, Object obj){
         ExporerAgent exporerAgent = (ExporerAgent) obj;
         exporerAgent.setTarget(node);
-        exporerAgent.setTargetNeigs(node.getRasideauDegree());
+        exporerAgent.setTargetNeigs(node.getRasidualNodes());
         BasicNode sourcenode = (BasicNode) exporerAgent.getSource();
         node.send(sourcenode,exporerAgent);
     }
@@ -69,8 +99,7 @@ public class GreedyBasedFacade {
         ExporerAgent explorerAgent = (ExporerAgent) obj;
         BasicNode target = (BasicNode) explorerAgent.getTarget();
         leaderAgent.addNewNode(target);
-        leaderAgent.addHop2Neighbours(target, explorerAgent.getTargetNeigs());
-        leaderAgent.updateHop2Neighbours();
+        leaderAgent.updateHop2Info(target, target.getRasidualNodes());
     }
 }
 
