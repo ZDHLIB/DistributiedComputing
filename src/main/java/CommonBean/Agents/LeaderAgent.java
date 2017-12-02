@@ -12,9 +12,11 @@ public class LeaderAgent extends Agent {
 
     private final static Logger logger = LoggerFactory.getLogger(LeaderAgent.class);
 
+    private static int stepAssign = 0;
     private static LeaderAgent leaderAgent = null;
-    private ExporerAgent exporerAgent = null;
+    private BasicNode target = null;
     private HashMap<Integer,Node> exploredMap = new HashMap<Integer, Node>();
+    private ArrayList<ShadowAgent> shadowAgents = new ArrayList<ShadowAgent>();
 
     //This is the frontiers, if a node is explored, it should be moved
     private HashMap<Node,HashMap<Integer, Node> > hop2Neighbours = new HashMap<Node, HashMap<Integer, Node>>();
@@ -66,4 +68,36 @@ public class LeaderAgent extends Agent {
         }
     }
 
+
+    public HashMap<Node,HashMap<Integer, Node> > getHop2Neighbours(){
+        return hop2Neighbours;
+    }
+
+    public ArrayList<ShadowAgent> getShadowAgents() {
+        return shadowAgents;
+    }
+
+    public void addShadowAgent(ShadowAgent shadowAgent) {
+        this.shadowAgents.add(shadowAgent);
+    }
+
+    public int getStepAssign() {
+        return stepAssign;
+    }
+
+    public void addStepAssign(){
+        this.stepAssign += 1;
+    }
+
+    public void resetStepAssign(){
+        this.stepAssign = 0;
+    }
+
+    public BasicNode getTarget() {
+        return target;
+    }
+
+    public void setTarget(BasicNode target) {
+        this.target = target;
+    }
 }
