@@ -88,4 +88,21 @@ public class TestFunctions {
         Thread.sleep(50000);
 
     }
+
+    @Test
+    public void testSendMsg() throws InterruptedException {
+        Topology tp = new Topology(400,400);
+        Node n1 = new MovingNode();
+        Node n2 = new MovingNode();
+        Node n3 = new MovingNode();
+        n1.setID(1);
+        n2.setID(2);
+        n3.setID(3);
+        tp.addNode(50,200, n1);
+        tp.addNode(200,200, n2);
+        tp.addNode(350,200, n3);
+        n1.send(n3, 1);
+        new JViewer(tp);
+//        Thread.sleep(50000);
+    }
 }
