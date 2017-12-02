@@ -1,5 +1,6 @@
 package BlackVirusFinding;
 
+import CommonBean.Agents.ExporerAgent;
 import CommonBean.Agents.ShadowAgent;
 import CommonBean.NodeBean.BasicNode;
 import jbotsim.Node;
@@ -24,30 +25,32 @@ public class GreedyBasedAgentOperatioin extends AbstractAgentOperatioin {
         res.add(source);
         res.add(target);
         int residual = Integer.MAX_VALUE;
-        double distance = Integer.MAX_VALUE;
+        double dis = Integer.MAX_VALUE;
 
         HashMap<BasicNode, ArrayList<BasicNode> > frontiers = leaderAgent.getHop2Info();
 
+        for(Map.Entry entry : frontiers.entrySet()){
+            BasicNode nodeSource = (BasicNode) entry.getKey();
+            ArrayList<BasicNode> sourceResidual = (ArrayList<BasicNode>) entry.getValue();
+            System.out.print(nodeSource.getID()+"={ ");
+            for(BasicNode node : sourceResidual){
+                System.out.print(node.getID()+" ");
+            }
+            System.out.println("}");
+        }
+
         for(Map.Entry entry1 : frontiers.entrySet() ){
-            BasicNode nodeSource = (BasicNode) entry1.getKey();
+            BasicNode tmpSource = (BasicNode) entry1.getKey();
             ArrayList<BasicNode> sourceResidual = (ArrayList<BasicNode>) entry1.getValue();
 
             for(BasicNode node : sourceResidual){
                 int tmpSize = node.getRasidualNodes().size();
-                if( tmpSize < residual ){
-                    res.set(0,nodeSource);
-                    res.set(1, node);
-                    distance = nodeSource.distance(node);
+                if( (tmpSize < residual)
+                        || (tmpSize == residual && tmpSource.distance(node) < dis) ){
+                    res.set(0,tmpSource);
+                    res.set(1,node);
+                    dis = tmpSource.distance(node);
                     residual = tmpSize;
-                }
-                // Choose short distance
-                else if( tmpSize == residual ){
-                    if( nodeSource.distance( node ) < distance ){
-                        res.set( 0, nodeSource );
-                        res.set( 1, node );
-                        distance = nodeSource.distance( node );
-                        residual = tmpSize;
-                    }
                 }
             }
         }
@@ -88,14 +91,22 @@ public class GreedyBasedAgentOperatioin extends AbstractAgentOperatioin {
         //current node is the last one
         leaderAgent.addProtectNode(currentNode);
 
-
-        ArrayList<BasicNode> protectedNodes = leaderAgent.getProtectedNodes();
+        Queue<BasicNode> protectedNodes = leaderAgent.getProtectedNodes();
         ArrayList<ShadowAgent> shadowPosition = leaderAgent.getShadowPosition();
 
+        if( protectedNodes.size() == 1 ){
+            leaderAgent.getProtectedNodes().poll();
+            ExporerAgent exporerAgent = ExporerAgent.getInstance();
+            exporerAgent.setSource(currentNode);
+            exporerAgent.setTarget(leaderAgent.getTarget());
+            currentNode.send(leaderAgent.getTarget(), exporerAgent);
+            return;
+        }
+
         //Send shadow agents to neighours of target except last one, as it will be protected by leader
-        for(int i = 0; i < protectedNodes.size()-1; i++){
+        int i = 0;
+        for(BasicNode target : protectedNodes){
             ShadowAgent shadowAgent = shadowPosition.get(i);
-            BasicNode target = protectedNodes.get(i);
             //If shadow is already staying at a node, then send it to new place
             if( shadowAgent.getTarget() != null ) {
                 shadowAgent.getTarget().send(target, shadowAgent);
@@ -105,12 +116,26 @@ public class GreedyBasedAgentOperatioin extends AbstractAgentOperatioin {
                 shadowAgent.setTarget(target);
                 currentNode.send(target, shadowAgent);
             }
+            i++;
         }
+        logger.info("Protected nodes' size: {}", protectedNodes.size());
 
         //Send leader to first one to make sure that the shadow arrives
-        currentNode.send(protectedNodes.get(0), leaderAgent);
+        currentNode.send(leaderAgent.getNextProtectNode(), leaderAgent);
         currentNode.setLeaderAgent(null);
     }
 
 
+    public BasicNode getShortestNeigb(BasicNode node){
+        BasicNode res = null;
+        ArrayList<BasicNode> nodes = getExploredNeighbours(node);
+        double d = Double.MAX_VALUE;
+        for(BasicNode n : nodes){
+            if( node.distance(n) < d ){
+                res = n;
+                d = node.distance(n);
+            }
+        }
+        return res;
+    }
 }
