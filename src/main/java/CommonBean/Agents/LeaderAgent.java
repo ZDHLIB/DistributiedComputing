@@ -89,6 +89,14 @@ public class LeaderAgent extends Agent {
         return null;
     }
 
+    public void clear(){
+        target = null;
+        currentNode = null;
+        protectedNodes.clear();
+        shadowPosition.clear();
+        exploredMap.clear();
+    }
+
     public BasicNode getTarget() {
         return target;
     }
