@@ -13,8 +13,9 @@ public class ExporerAgent extends Agent {
     private Node source = null;
     private Node target = null;
     private HashMap<Integer, Node> targetNeigs = new HashMap<Integer, Node>();
+    private static ExporerAgent exporerAgent = null;
 
-    public ExporerAgent(AgentTypeEnum type){
+    private ExporerAgent(AgentTypeEnum type){
         this.type = type;
     }
 
@@ -28,6 +29,18 @@ public class ExporerAgent extends Agent {
         for(Map.Entry entry : neigs.entrySet()){
             targetNeigs.put( (Integer) entry.getKey(), (BasicNode) entry.getValue());
         }
+    }
+
+    public static ExporerAgent getInstance(){
+        if(exporerAgent == null){
+            synchronized (LeaderAgent.class){
+                if(exporerAgent == null){
+                    exporerAgent = new ExporerAgent(AgentTypeEnum.LEADER);
+                    return exporerAgent;
+                }
+            }
+        }
+        return exporerAgent;
     }
 
     public Node getSource() {
