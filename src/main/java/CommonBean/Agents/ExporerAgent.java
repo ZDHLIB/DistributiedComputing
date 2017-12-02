@@ -12,7 +12,7 @@ public class ExporerAgent extends Agent {
 
     private Node source = null;
     private Node target = null;
-    private HashMap<Integer, Node> targetNeigs = new HashMap<Integer, Node>();
+    private ArrayList<BasicNode> targetNeigs = new ArrayList<BasicNode>();
     private static ExporerAgent exporerAgent = null;
 
     private ExporerAgent(AgentTypeEnum type){
@@ -20,14 +20,14 @@ public class ExporerAgent extends Agent {
     }
 
 
-    public HashMap<Integer, Node> getTargetNeigs() {
+    public ArrayList<BasicNode> getTargetNeigs() {
         return targetNeigs;
     }
 
-    public void setTargetNeigs(HashMap<Integer, Node> neigs) {
+    public void setTargetNeigs(ArrayList<BasicNode> neigs) {
         targetNeigs.clear();
-        for(Map.Entry entry : neigs.entrySet()){
-            targetNeigs.put( (Integer) entry.getKey(), (BasicNode) entry.getValue());
+        for(BasicNode node : neigs){
+            targetNeigs.add(node);
         }
     }
 
