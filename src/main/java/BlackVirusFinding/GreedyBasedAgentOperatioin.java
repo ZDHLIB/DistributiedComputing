@@ -81,8 +81,13 @@ public class GreedyBasedAgentOperatioin extends AbstractAgentOperatioin {
         logger.info("LeaderAgent is currently at node {}", currentNode.getID());
         //1. Tell leader what nodes should be protected
         for(BasicNode node : exploredNeigs){
+            if( node == currentNode )
+                continue;
             leaderAgent.addProtectNode(node);
         }
+        //current node is the last one
+        leaderAgent.addProtectNode(currentNode);
+
 
         ArrayList<BasicNode> protectedNodes = leaderAgent.getProtectedNodes();
         ArrayList<ShadowAgent> shadowPosition = leaderAgent.getShadowPosition();
