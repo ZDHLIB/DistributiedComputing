@@ -1,6 +1,7 @@
 package CommonBean.Agents;
 
 import CommonBean.NodeBean.BasicNode;
+import jbotsim.Topology;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -13,6 +14,8 @@ public class LeaderAgent extends Agent {
     private static LeaderAgent leaderAgent = null;
     private BasicNode target = null;
     private BasicNode currentNode = null;
+    private Topology tp = null;
+    private String status = "Exp"; //Explore (Exp) phase, and Elimination(E) phase
     private HashMap<BasicNode, ArrayList<BasicNode> > hop2Info = new HashMap<BasicNode, ArrayList<BasicNode> >();
     private ArrayList<ShadowAgent>  shadowPosition = new ArrayList<ShadowAgent>();
     private Queue<BasicNode> protectedNodes = new LinkedList<BasicNode>();
@@ -42,10 +45,12 @@ public class LeaderAgent extends Agent {
     public void move2Source(BasicNode source){
         source.setLeaderAgent(leaderAgent);
         currentNode.setLeaderAgent(null);
+        currentNode = source;
     }
 
     public void addNewNode(BasicNode node){
-        exploredMap.add(node);
+        if(!exploredMap.contains(node))
+            exploredMap.add(node);
     }
 
     /**
@@ -143,5 +148,21 @@ public class LeaderAgent extends Agent {
 
     public void setExploredMap(ArrayList<BasicNode> exploredMap) {
         this.exploredMap = exploredMap;
+    }
+
+    public Topology getTp() {
+        return tp;
+    }
+
+    public void setTp(Topology tp) {
+        this.tp = tp;
+    }
+
+    public String getStatus() {
+        return status;
+    }
+
+    public void setStatus(String status) {
+        this.status = status;
     }
 }
