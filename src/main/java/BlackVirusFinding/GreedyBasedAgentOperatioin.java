@@ -1,9 +1,13 @@
 package BlackVirusFinding;
 
+import CommonBean.Agents.BlackVirusAgent;
 import CommonBean.Agents.ExporerAgent;
+import CommonBean.Agents.LeaderAgent;
 import CommonBean.Agents.ShadowAgent;
+import CommonBean.MyMessage;
 import CommonBean.NodeBean.BasicNode;
 import jbotsim.Node;
+import jbotsim.Topology;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -99,7 +103,8 @@ public class GreedyBasedAgentOperatioin extends AbstractAgentOperatioin {
             ExporerAgent exporerAgent = ExporerAgent.getInstance();
             exporerAgent.setSource(currentNode);
             exporerAgent.setTarget(leaderAgent.getTarget());
-            currentNode.send(leaderAgent.getTarget(), exporerAgent);
+            MyMessage mm = new MyMessage(exporerAgent, null);
+            currentNode.send(leaderAgent.getTarget(), mm);
             return;
         }
 
@@ -109,33 +114,107 @@ public class GreedyBasedAgentOperatioin extends AbstractAgentOperatioin {
             ShadowAgent shadowAgent = shadowPosition.get(i);
             //If shadow is already staying at a node, then send it to new place
             if( shadowAgent.getTarget() != null ) {
-                shadowAgent.getTarget().send(target, shadowAgent);
+                MyMessage mm = new MyMessage(shadowAgent, null);
+                shadowAgent.getTarget().send(target, mm);
                 shadowAgent.getTarget().setShadowAgent(null);
                 shadowAgent.setTarget(target);
             }else {
                 shadowAgent.setTarget(target);
-                currentNode.send(target, shadowAgent);
+                AbstractAgentOperatioin.send(currentNode,target,shadowAgent);
             }
             i++;
+            if( i == protectedNodes.size()-1 ){
+                break;
+            }
         }
         logger.info("Protected nodes' size: {}", protectedNodes.size());
 
         //Send leader to first one to make sure that the shadow arrives
-        currentNode.send(leaderAgent.getNextProtectNode(), leaderAgent);
+        AbstractAgentOperatioin.send(currentNode,leaderAgent.getNextProtectNode(), leaderAgent);
         currentNode.setLeaderAgent(null);
     }
 
 
-    public BasicNode getShortestNeigb(BasicNode node){
-        BasicNode res = null;
-        ArrayList<BasicNode> nodes = getExploredNeighbours(node);
-        double d = Double.MAX_VALUE;
-        for(BasicNode n : nodes){
-            if( node.distance(n) < d ){
-                res = n;
-                d = node.distance(n);
+    public void eliminate(BasicNode node){
+        LeaderAgent leaderAgent = LeaderAgent.getInstance();
+        Queue<BasicNode> protectNodes = leaderAgent.getProtectedNodes();
+        int i = 0;
+        for(BasicNode item : protectNodes){
+            logger.info("Send shadowAgent to eliminate node {}", item.getID());
+            ShadowAgent shadowAgent = leaderAgent.getShadowPosition().get(i);
+            if(shadowAgent.getTarget() != null){
+                AbstractAgentOperatioin.send(shadowAgent.getTarget(),item, shadowAgent);
+                shadowAgent.getTarget().setShadowAgent(null);
+                shadowAgent.setTarget(item);
+            }else{
+                AbstractAgentOperatioin.send(node, item, shadowAgent);
+                shadowAgent.setTarget(item);
+            }
+            i++;
+        }
+        AbstractAgentOperatioin.send(node, protectNodes.poll(), node.getLeaderAgent());
+        node.setLeaderAgent(null);
+    }
+
+
+    /**
+     * Receive visited message, update its own residual degree
+     * @param node
+     */
+    public void updateResidualDegree(BasicNode node, Integer visited){
+        ArrayList<BasicNode> neigs = node.getRasidualNodes();
+        Iterator<BasicNode> iterator = neigs.iterator();
+        while(iterator.hasNext()){
+            Integer id = iterator.next().getID();
+            if( id.equals(visited) ){
+                iterator.remove();
+                return;
             }
         }
-        return res;
     }
+
+    /**
+     * Send explorerAgent back with its id and neighbours
+     * @param node
+     * @param exporerAgent
+     */
+    public void returnExplorerAgent(BasicNode node, ExporerAgent exporerAgent){
+        exporerAgent.setTarget(node);
+        exporerAgent.setTargetNeigs(node.getRasidualNodes());
+        BasicNode sourcenode = (BasicNode) exporerAgent.getSource();
+        MyMessage mm = new MyMessage(exporerAgent, null);
+        node.send(sourcenode,mm);
+    }
+
+    /**
+     * BlackVirusAgent sends its clones to neighbours
+     * @param node
+     * @param neighbours
+     */
+    public void sendClones2Neigbours(BasicNode node, List<Node> neighbours){
+        BlackVirusAgent blackVirusAgent = node.getBlackVirusAgent();
+        for(int i = 0; i < neighbours.size(); i++){
+            BasicNode n = (BasicNode) neighbours.get(i);
+            MyMessage mm = new MyMessage(blackVirusAgent.getClones().get(i), null);
+            node.send(n,mm);
+        }
+    }
+
+    /**
+     * Receive exploreAgent back, and then leader need to update explored map information
+     * @param target
+     */
+    public void updateExploredInfo(BasicNode target){
+        leaderAgent.addNewNode(target);
+        leaderAgent.updateHop2Info(target, target.getRasidualNodes());
+    }
+
+    public boolean checkTermination(){
+        if(leaderAgent.getExploredMap().size() == leaderAgent.getTp().getNodes().size()){
+            return true;
+        }else{
+            return false;
+        }
+    }
+
 }
