@@ -114,8 +114,7 @@ public class GreedyBasedAgentOperatioin extends AbstractAgentOperatioin {
             ShadowAgent shadowAgent = shadowPosition.get(i);
             //If shadow is already staying at a node, then send it to new place
             if( shadowAgent.getTarget() != null ) {
-                MyMessage mm = new MyMessage(shadowAgent, null);
-                shadowAgent.getTarget().send(target, mm);
+                AbstractAgentOperatioin.send(shadowAgent.getTarget(),target, shadowAgent);
                 shadowAgent.getTarget().setShadowAgent(null);
                 shadowAgent.setTarget(target);
             }else {
@@ -140,20 +139,19 @@ public class GreedyBasedAgentOperatioin extends AbstractAgentOperatioin {
         Queue<BasicNode> protectNodes = leaderAgent.getProtectedNodes();
         int i = 0;
         for(BasicNode item : protectNodes){
-            logger.info("Send shadowAgent to eliminate node {}", item.getID());
             ShadowAgent shadowAgent = leaderAgent.getShadowPosition().get(i);
             if(shadowAgent.getTarget() != null){
+                logger.info("{} sends shadowAgent to eliminate node {}", shadowAgent.getTarget().getID(), item.getID());
                 AbstractAgentOperatioin.send(shadowAgent.getTarget(),item, shadowAgent);
                 shadowAgent.getTarget().setShadowAgent(null);
                 shadowAgent.setTarget(item);
             }else{
+                logger.info("{} sends shadowAgent to eliminate node {}", node.getID(), item.getID());
                 AbstractAgentOperatioin.send(node, item, shadowAgent);
                 shadowAgent.setTarget(item);
             }
             i++;
         }
-        AbstractAgentOperatioin.send(node, protectNodes.poll(), node.getLeaderAgent());
-        node.setLeaderAgent(null);
     }
 
 

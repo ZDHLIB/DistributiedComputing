@@ -36,7 +36,6 @@ public class Initiator {
 
         // randomly set black virus node, do not set it to node 0
         int blackVirusNode = random.nextInt(n-2) + 1;
-
         for(int i = 0; i < n; i++){
             logger.info("Create node with id {}...", i);
 
@@ -83,14 +82,14 @@ public class Initiator {
                 basicNode.addRasideauDegree(n2);
             }
             if(basicNode.getID() == 0){
-                initSink(basicNode);
+                initSink(basicNode, tp);
             }
         }
     }
 
 
-    private static void initSink(BasicNode sinkNode){
-
+    private static void initSink(BasicNode sinkNode, Topology tp){
+        LeaderAgent.getInstance().setTp(tp);
         LeaderAgent.getInstance().addNewNode(sinkNode);
         ArrayList<BasicNode> neigs = new ArrayList<BasicNode>();
         for(Node n : sinkNode.getNeighbors()){

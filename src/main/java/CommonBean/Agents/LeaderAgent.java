@@ -15,7 +15,6 @@ public class LeaderAgent extends Agent {
     private BasicNode target = null;
     private BasicNode currentNode = null;
     private Topology tp = null;
-    private String status = "Exp"; //Explore (Exp) phase, and Elimination(E) phase
     private HashMap<BasicNode, ArrayList<BasicNode> > hop2Info = new HashMap<BasicNode, ArrayList<BasicNode> >();
     private ArrayList<ShadowAgent>  shadowPosition = new ArrayList<ShadowAgent>();
     private Queue<BasicNode> protectedNodes = new LinkedList<BasicNode>();
@@ -43,6 +42,9 @@ public class LeaderAgent extends Agent {
      * @param source
      */
     public void move2Source(BasicNode source){
+        if(source == currentNode){
+            return;
+        }
         source.setLeaderAgent(leaderAgent);
         currentNode.setLeaderAgent(null);
         currentNode = source;
@@ -156,13 +158,5 @@ public class LeaderAgent extends Agent {
 
     public void setTp(Topology tp) {
         this.tp = tp;
-    }
-
-    public String getStatus() {
-        return status;
-    }
-
-    public void setStatus(String status) {
-        this.status = status;
     }
 }

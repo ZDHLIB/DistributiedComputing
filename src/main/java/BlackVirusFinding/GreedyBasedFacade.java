@@ -47,9 +47,13 @@ public class GreedyBasedFacade {
         ArrayList<BasicNode> residualNodes = target.getRasidualNodes();
         for(BasicNode n : residualNodes){
             node.getLeaderAgent().addProtectNode(n);
+            greedyBasedAgentOperatioin.updateExploredInfo(n);
         }
-        node.getLeaderAgent().setStatus("E");
-        greedyBasedAgentOperatioin.eliminate(node);
+        if(node.getLeaderAgent().getProtectedNodes().isEmpty()){
+            logger.info("No nodes will be destroyed by clones, finished!");
+        } else {
+            greedyBasedAgentOperatioin.eliminate(node);
+        }
     }
 
 
@@ -67,13 +71,7 @@ public class GreedyBasedFacade {
         if( node.isExplored() ){
             BasicNode target = (BasicNode) exporerAgent.getTarget();
             greedyBasedAgentOperatioin.updateExploredInfo(target);
-            //Check termination
-            if(greedyBasedAgentOperatioin.checkTermination()){
-                logger.info("Congratulation, you have eliminated all black virus!");
-                return;
-            }else {
-                startExplorer();
-            }
+            startExplorer();
         }
         //I am not explored, so I receive it for the first time
         //If I have been destroyed by black virus
@@ -84,6 +82,8 @@ public class GreedyBasedFacade {
             node.getBlackVirusAgent().setTargetNeigs(neighbours);
             node.getBlackVirusAgent().setActivate(false);
             greedyBasedAgentOperatioin.sendClones2Neigbours(node, neighbours);
+            greedyBasedAgentOperatioin.updateExploredInfo(node);
+            logger.info("I am BlackVirus node {}, and have been deactivated by explorer", node.getID());
         }
         //I am a safe node, set to be explored, and send visited to neighbours, send explorer back
         else {
@@ -98,16 +98,18 @@ public class GreedyBasedFacade {
     public void dealWithBlackClonesAgent(BasicNode node, BlackVirusAgent blackVirusAgent){
         // I have been protected by shadowAgent
         if( node.getShadowAgent() != null ){
+            logger.info("{} has shadowAgent, deactivate receiving clone", node.getID());
             blackVirusAgent.setActivate(false);
         }
         // I have been protected by leaderAgent, startExplorer eliminate phase
         else if(node.getLeaderAgent() != null){
+            logger.info("{} has leaderAgent, deactivate receiving clone", node.getID());
             blackVirusAgent.setActivate(false);
-            //TODO startExplorer eliminate phase
             startElimination(node, node.getLeaderAgent().getTarget());
         }
         // I have not been explored, so I have not been protected
         else {
+            logger.info("{} do not have been protected,destroyed by receiving clone", node.getID());
             node.setBlackVirusAgent(blackVirusAgent);
         }
     }
@@ -121,6 +123,7 @@ public class GreedyBasedFacade {
             }
             //Leader has been here for waiting for shadowAgent, then it will go to next protected node
             else {
+                node.setShadowAgent(shadowAgent);
                 BasicNode protectNode = node.getLeaderAgent().getNextProtectNode();
                 AbstractAgentOperatioin.send(node,protectNode, node.getLeaderAgent());
                 node.setLeaderAgent(null);
@@ -128,48 +131,18 @@ public class GreedyBasedFacade {
         }
         // I have not been explored, if I have been destroyed by clones, then deactivate it
         else {
-            // Waiting for leaderAgent
-            if( node.getLeaderAgent() == null ){
-                node.setShadowAgent(shadowAgent);
-            }else{
-                BasicNode nextNode = leaderAgent.getProtectedNodes().poll();
-                if( nextNode != null ) {
-                    AbstractAgentOperatioin.send(node, nextNode, leaderAgent);
-                }else{
-                    node.getLeaderAgent().setStatus("Exp");
-                    AbstractAgentOperatioin.send(node, leaderAgent.getCurrentNode(), leaderAgent);
-                }
-                node.setLeaderAgent(null);
-            }
             if( node.getBlackVirusAgent() != null
                     && node.getBlackVirusAgent().getType().equals(AgentTypeEnum.CLONESVIRUS)){
                 node.getBlackVirusAgent().setActivate(false);
+                logger.info("{} node's black virus clone has been deactivate.", node.getID());
             }
         }
     }
 
 
     public void dealWithLeaderAgent(BasicNode node){
-        if( node.getLeaderAgent().getStatus().equals("E") ){
-            // Leader comes here to make sure I have been eliminated
-            if( !node.isExplored() && node.getShadowAgent() != null){
-                leaderAgent.getShadowPosition().remove(node.getShadowAgent());
-                BasicNode nextNode = leaderAgent.getProtectedNodes().poll();
-                if( nextNode != null ) {
-                    AbstractAgentOperatioin.send(node, nextNode, leaderAgent);
-                }else{
-                    node.getLeaderAgent().setStatus("Exp");
-                    AbstractAgentOperatioin.send(node, leaderAgent.getCurrentNode(), leaderAgent);
-                }
-                node.setLeaderAgent(null);
-            } else if (node.isExplored()) {
-                node.getLeaderAgent().setStatus("Exp");
-                node.getLeaderAgent().updateHop2Info(node.getLeaderAgent().getTarget(), node.getLeaderAgent().getTarget().getRasidualNodes());
-                startExplorer();
-            }
-        }
         // Make sure shadowAgent has been here, then go to next node
-        else if( node.getShadowAgent() != null ){
+        if( node.getShadowAgent() != null ){
             node.getLeaderAgent().setCurrentNode(node);
             BasicNode protectNode = node.getLeaderAgent().getNextProtectNode();
             AbstractAgentOperatioin.send(node,protectNode, leaderAgent);
