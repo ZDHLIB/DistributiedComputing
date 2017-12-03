@@ -3,6 +3,7 @@ package CommonBean.NodeBean;
 import BlackVirusFinding.AbstractAgentOperatioin;
 import BlackVirusFinding.GreedyBasedFacade;
 import CommonBean.Agents.*;
+import CommonBean.MyMessage;
 import jbotsim.Message;
 import jbotsim.Node;
 import org.slf4j.Logger;
@@ -41,13 +42,16 @@ public class BasicNode extends Node {
 
     @Override
     public void onMessage(Message message) {
+        // processing of a received message
+        MyMessage mm = (MyMessage) message.getContent();
         //Destination is not me, forward it
-        if( message.getDestination() != this ){
-            send(message.getDestination(), message);
+        if( mm.getPath() != null && !mm.getPath().isEmpty() ){
+            BasicNode nextNode = mm.getPath().poll();
+            logger.info("{} receives message from {}, and forwards to {}", getID(), message.getSender(), nextNode.getID());
+            send(nextNode, mm);
             return;
         }
-        // processing of a received message
-        Object obj = message.getContent();
+        Object obj = mm.getObj();
         //String: visited message
         if( obj instanceof Integer ){
             Integer data = (Integer) obj;
