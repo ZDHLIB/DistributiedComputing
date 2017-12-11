@@ -1,5 +1,10 @@
 package CommonBean;
 
+import BlackVirusFinding.ManagerExp;
+
+import java.util.Map;
+import java.util.UUID;
+
 public class StatisticInfo {
     private static StatisticInfo ourInstance = null;
 
@@ -9,6 +14,7 @@ public class StatisticInfo {
     private static Integer NO_SHADOWS = 0;
     private static Integer NO_EDGES = 0;
     private static Integer NO_NODES = 0;
+    private static Integer TERMINATE = 0;
 
 
     public static StatisticInfo getInstance() {
@@ -34,6 +40,33 @@ public class StatisticInfo {
         NO_MOVES_LEADER++;
     }
 
+    public synchronized void reduceTERMINATE(){
+        TERMINATE--;
+        if(checkTerminate()){
+            ManagerExp.writeResult();
+            ManagerExp.Terminate();
+        }
+
+    }
+
+    public String[] getResults(){
+        String[] res = new String[7];
+        res[0] = String.valueOf(UUID.randomUUID());
+        res[1] = String.valueOf(NO_NODES);
+        res[2] = String.valueOf(NO_EDGES);
+        res[3] = String.valueOf(NO_MOVES);
+        res[4] = String.valueOf(NO_MOVES_LEADER);
+        res[5] = String.valueOf(NO_SHADOWS);
+        return res;
+    }
+
+    private boolean checkTerminate(){
+        if(TERMINATE <= 0){
+            return true;
+        }
+        return false;
+    }
+
     public static Integer getNoEdges() {
         return NO_EDGES;
     }
@@ -56,5 +89,13 @@ public class StatisticInfo {
 
     public static void setNoShadows(Integer noShadows) {
         NO_SHADOWS = noShadows;
+    }
+
+    public static Integer getTERMINATE() {
+        return TERMINATE;
+    }
+
+    public static void setTERMINATE(Integer TERMINATE) {
+        StatisticInfo.TERMINATE = TERMINATE;
     }
 }
