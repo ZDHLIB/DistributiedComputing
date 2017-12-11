@@ -6,6 +6,7 @@ import CommonBean.Agents.LeaderAgent;
 import CommonBean.Agents.ShadowAgent;
 import CommonBean.MyMessage;
 import CommonBean.NodeBean.BasicNode;
+import CommonBean.StatisticInfo;
 import jbotsim.Node;
 import jbotsim.Topology;
 import org.slf4j.Logger;
@@ -137,6 +138,7 @@ public class GreedyBasedAgentOperatioin extends AbstractAgentOperatioin {
     public void eliminate(BasicNode node){
         LeaderAgent leaderAgent = LeaderAgent.getInstance();
         Queue<BasicNode> protectNodes = leaderAgent.getProtectedNodes();
+        statisticInfo.setTERMINATE(protectNodes.size());
         int i = 0;
         for(BasicNode item : protectNodes){
             ShadowAgent shadowAgent = leaderAgent.getShadowPosition().get(i);
