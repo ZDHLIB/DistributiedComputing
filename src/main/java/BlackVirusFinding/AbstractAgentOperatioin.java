@@ -6,6 +6,7 @@ import CommonBean.Agents.LeaderAgent;
 import CommonBean.Agents.ShadowAgent;
 import CommonBean.MyMessage;
 import CommonBean.NodeBean.BasicNode;
+import CommonBean.StatisticInfo;
 import jbotsim.Node;
 import jbotsim.Topology;
 import org.slf4j.Logger;
@@ -19,6 +20,7 @@ public abstract class AbstractAgentOperatioin {
 
 
     protected static LeaderAgent leaderAgent = LeaderAgent.getInstance();
+    protected StatisticInfo statisticInfo = StatisticInfo.getInstance();
 
     /**
      * get source node and target node
