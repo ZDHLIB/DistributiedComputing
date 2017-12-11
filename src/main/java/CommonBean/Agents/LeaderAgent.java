@@ -1,6 +1,7 @@
 package CommonBean.Agents;
 
 import CommonBean.NodeBean.BasicNode;
+import CommonBean.StatisticInfo;
 import jbotsim.Topology;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -19,6 +20,7 @@ public class LeaderAgent extends Agent {
     private ArrayList<ShadowAgent>  shadowPosition = new ArrayList<ShadowAgent>();
     private Queue<BasicNode> protectedNodes = new LinkedList<BasicNode>();
     private ArrayList<BasicNode> exploredMap = new ArrayList<BasicNode>();
+    private StatisticInfo statisticInfo = StatisticInfo.getInstance();
 
 
     private LeaderAgent(AgentTypeEnum type){
@@ -86,6 +88,9 @@ public class LeaderAgent extends Agent {
                 ShadowAgent shadowAgent = new ShadowAgent(AgentTypeEnum.CLEANER);
                 shadowPosition.add(shadowAgent);
             }
+        }
+        if( statisticInfo.getNoShadows() < shadowPosition.size() ) {
+            statisticInfo.setNoShadows(shadowPosition.size());
         }
     }
 
