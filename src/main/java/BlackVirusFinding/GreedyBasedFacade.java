@@ -3,6 +3,7 @@ package BlackVirusFinding;
 import CommonBean.Agents.*;
 import CommonBean.MyMessage;
 import CommonBean.NodeBean.BasicNode;
+import CommonBean.StatisticInfo;
 import jbotsim.Node;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -14,6 +15,7 @@ public class GreedyBasedFacade {
     private final static Logger logger = LoggerFactory.getLogger(GreedyBasedFacade.class);
 
     private LeaderAgent leaderAgent = LeaderAgent.getInstance();
+    private StatisticInfo statisticInfo = StatisticInfo.getInstance();
     private GreedyBasedAgentOperatioin greedyBasedAgentOperatioin = new GreedyBasedAgentOperatioin();
 
     /**
@@ -135,6 +137,7 @@ public class GreedyBasedFacade {
                     && node.getBlackVirusAgent().getType().equals(AgentTypeEnum.CLONESVIRUS)){
                 node.getBlackVirusAgent().setActivate(false);
                 logger.info("{} node's black virus clone has been deactivate.", node.getID());
+                statisticInfo.reduceTERMINATE();
             }
         }
     }
