@@ -113,7 +113,7 @@ public class GreedyBasedAgentOperatioin extends AbstractAgentOperatioin {
         for(BasicNode target : protectedNodes){
             ShadowAgent shadowAgent = shadowPosition.get(i);
             //If shadow is already staying at a node, then send it to new place
-            if( shadowAgent.getTarget() != null ) {
+            if( shadowAgent.getTarget() != null && shadowAgent.getTarget() != target) {
                 AbstractAgentOperatioin.send(shadowAgent.getTarget(),target, shadowAgent);
                 shadowAgent.getTarget().setShadowAgent(null);
                 shadowAgent.setTarget(target);
