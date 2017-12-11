@@ -16,6 +16,8 @@ public class Initiator {
 
     private final static Logger logger = LoggerFactory.getLogger(Initiator.class);
 
+    private static LeaderAgent leaderAgent = LeaderAgent.getInstance();
+
     /**
      * Create a topology with n nodes
      * @param n  # of nodes
@@ -30,7 +32,7 @@ public class Initiator {
 
         BasicNode node = null;
         Random random = new Random();
-        LeaderAgent.getInstance().clear();
+        leaderAgent.clear();
         Topology tp = new Topology(width,height,start);
         tp.setDefaultNodeModel(var1);
 
@@ -42,20 +44,14 @@ public class Initiator {
             NodeBuilder nodeBuilder = new NodeBuilder(BasicNode.class);
             nodeBuilder.buildId(i)
                        .buildWireless(true)
-                       .buildCommunicationRange(width<height?0.5*width:0.5*height);
+                       .buildCommunicationRange(width<height?calRange(width):calRange(height));
 
             //Initial leader, explorer, shadow agents at node 0
             //Initial node with black virus
             if(i == 0){
-//                nodeBuilder.buildColor(new Color(123, 27, 7));
-                nodeBuilder.buildLeaderAgent();
-                node = nodeBuilder.build();
-                node.setExplored(true);
-                LeaderAgent.getInstance().setCurrentNode(node);
+                node = buildLeader(nodeBuilder);
             } else if(i == blackVirusNode) {
-//                nodeBuilder.buildColor(new Color(0, 0, 0));
-                nodeBuilder.buildBlackVirusAgent();
-                node = nodeBuilder.build();
+                node = buildBlackVirus(nodeBuilder);
             } else {
                 node = nodeBuilder.build();
             }
@@ -65,10 +61,30 @@ public class Initiator {
             tp.addNode(x,y,node);
         }
 
+        //Check connected
+        if(!checkConn(tp)){
+            tp.clear();
+            return null;
+        }
+
         initResidualDegree(tp);
 
         logger.info("Initial topology finished. Sink: 0, blackVirus: {}", blackVirusNode);
         return tp;
+    }
+
+    private static BasicNode buildLeader(NodeBuilder nodeBuilder){
+        nodeBuilder.buildLeaderAgent();
+        BasicNode node = nodeBuilder.build();
+        node.setExplored(true);
+        leaderAgent.setCurrentNode(node);
+        return node;
+    }
+
+
+    private static BasicNode buildBlackVirus(NodeBuilder nodeBuilder){
+        nodeBuilder.buildBlackVirusAgent();
+        return nodeBuilder.build();
     }
 
 
@@ -96,6 +112,29 @@ public class Initiator {
             neigs.add((BasicNode) n);
         }
         LeaderAgent.getInstance().updateHop2Info(sinkNode,neigs);
+    }
+
+    /**
+     * Calculate communication range
+     * @param baseRange
+     * @return
+     */
+    private static double calRange(double baseRange){
+        return baseRange / Math.sqrt(2);
+    }
+
+    /**
+     * Check whether all nodes are connected or not
+     * @param tp
+     * @return
+     */
+    private static boolean checkConn(Topology tp){
+        List<Node> nodes = tp.getNodes();
+        for(Node node : nodes){
+            if( node.getLinks().size() == 0 )
+                return false;
+        }
+        return true;
     }
 
 
