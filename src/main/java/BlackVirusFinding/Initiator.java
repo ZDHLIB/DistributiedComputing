@@ -3,6 +3,7 @@ package BlackVirusFinding;
 import CommonBean.Agents.LeaderAgent;
 import CommonBean.NodeBean.BasicNode;
 import CommonBean.NodeBean.NodeBuilder;
+import CommonBean.StatisticInfo;
 import jbotsim.Node;
 import jbotsim.Topology;
 import org.slf4j.Logger;
@@ -17,6 +18,7 @@ public class Initiator {
     private final static Logger logger = LoggerFactory.getLogger(Initiator.class);
 
     private static LeaderAgent leaderAgent = LeaderAgent.getInstance();
+    private static StatisticInfo statisticInfo = StatisticInfo.getInstance();
 
     /**
      * Create a topology with n nodes
@@ -68,6 +70,9 @@ public class Initiator {
         }
 
         initResidualDegree(tp);
+
+        statisticInfo.setNoEdges(tp.getLinks().size());
+        statisticInfo.setNoNodes(tp.getNodes().size());
 
         logger.info("Initial topology finished. Sink: 0, blackVirus: {}", blackVirusNode);
         return tp;
