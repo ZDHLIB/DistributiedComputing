@@ -4,6 +4,7 @@ import BlackVirusFinding.AbstractAgentOperatioin;
 import BlackVirusFinding.GreedyBasedFacade;
 import CommonBean.Agents.*;
 import CommonBean.MyMessage;
+import CommonBean.StatisticInfo;
 import jbotsim.Message;
 import jbotsim.Node;
 import org.slf4j.Logger;
@@ -21,8 +22,8 @@ public class BasicNode extends Node {
     private LeaderAgent leaderAgent = null;
     private ShadowAgent shadowAgent = null;
     private ArrayList<BasicNode> rasidualNodes = new ArrayList<BasicNode>();
-
     private GreedyBasedFacade greedyBasedFacade = null;
+    private StatisticInfo statisticInfo = StatisticInfo.getInstance();
 
     @Override
     public void onStart() {
@@ -43,6 +44,8 @@ public class BasicNode extends Node {
     @Override
     public void onMessage(Message message) {
         // processing of a received message
+        //Collect the NO. of Movements
+        statisticInfo.addNO_MOVES();
         MyMessage mm = (MyMessage) message.getContent();
         //Destination is not me, forward it
         if( mm.getPath() != null && !mm.getPath().isEmpty() ){
@@ -78,8 +81,10 @@ public class BasicNode extends Node {
         }
         // Receive leaderAgent
         else if( obj instanceof LeaderAgent ){
+            //Collect NO. movements of LeaderAgent
+            statisticInfo.addNO_MOVES_LEADER();
             logger.info("{} receives LeaderAgent from {}", getID(), message.getSender());
-            this.setLeaderAgent(LeaderAgent.getInstance());
+            setLeaderAgent(LeaderAgent.getInstance());
             greedyBasedFacade.dealWithLeaderAgent(this);
         }
     }
@@ -112,7 +117,7 @@ public class BasicNode extends Node {
     }
 
     public LeaderAgent getLeaderAgent() {
-        return leaderAgent;
+        return this.leaderAgent;
     }
 
     public void setLeaderAgent(LeaderAgent leaderAgent) {
