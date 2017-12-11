@@ -115,6 +115,7 @@ public abstract class AbstractAgentOperatioin {
             MyMessage mm = new MyMessage(obj,null);
             source.send(target, mm);
         } else {
+            logger.info("Find shortest path from {} to {}", source.getID(), target.getID());
             Queue<BasicNode> path = AbstractAgentOperatioin.findNearestPath(source.getID(), target.getID());
             path.add(target);
             logger.info("Sending path:{}", path);
