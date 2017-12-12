@@ -4,13 +4,15 @@ import jbotsim.Node;
 import jbotsim.Topology;
 import jbotsim.ui.JViewer;
 import org.junit.Test;
+import utils.Output;
+
+import java.util.ArrayList;
 
 public class TestFunctions {
 
     @Test
     public void testHelloWorld() throws InterruptedException {
         new JViewer(new Topology());
-        Thread.sleep(50000);
     }
 
     @Test
@@ -21,7 +23,6 @@ public class TestFunctions {
         tp.addNode(100,100, new BasicNode());
         tp.addNode(150,150);
         new JViewer(tp);
-        Thread.sleep(50000);
     }
 
     /**
@@ -33,7 +34,6 @@ public class TestFunctions {
         Topology tp = new Topology(400, 300);
         tp.setDefaultNodeModel(MovingNode.class);
         new JViewer(tp);
-        Thread.sleep(50000);
     }
 
     /**
@@ -45,7 +45,6 @@ public class TestFunctions {
         Topology tp = new Topology();
         tp.setDefaultNodeModel(LonerGraphBased.class);
         new JViewer(tp);
-        Thread.sleep(50000);
     }
 
     /**
@@ -57,7 +56,6 @@ public class TestFunctions {
         Topology tp = new Topology();
         new LonerCentralized(tp);
         new JViewer(tp);
-        Thread.sleep(50000);
     }
 
 
@@ -66,7 +64,6 @@ public class TestFunctions {
         Topology tp = new Topology(400,300);
         tp.setNodeModel("car", HighwayCar.class);
         new JViewer(tp);
-        Thread.sleep(50000);
     }
 
     @Test
@@ -77,7 +74,6 @@ public class TestFunctions {
         Topology tp = new Topology();
         tp.addNode(100,100,node);
         new JViewer(tp);
-        Thread.sleep(50000);
 
     }
 
@@ -85,24 +81,33 @@ public class TestFunctions {
     public void testInitTopology() throws InterruptedException {
         Topology tp = Initiator.initTopology(10,600,600, true, BasicNode.class);
         new JViewer(tp);
-        Thread.sleep(50000);
 
     }
 
     @Test
     public void testSendMsg() throws InterruptedException {
-        Topology tp = new Topology(400,400);
-        Node n1 = new MovingNode();
-        Node n2 = new MovingNode();
-        Node n3 = new MovingNode();
-        n1.setID(1);
-        n2.setID(2);
-        n3.setID(3);
-        tp.addNode(50,200, n1);
-        tp.addNode(200,200, n2);
-        tp.addNode(350,200, n3);
-        n1.send(n3, 1);
-        new JViewer(tp);
+//        Topology tp = new Topology(400,400);
+//        Node n1 = new MovingNode();
+//        Node n2 = new MovingNode();
+//        Node n3 = new MovingNode();
+//        n1.setID(1);
+//        n2.setID(2);
+//        n3.setID(3);
+//        tp.addNode(50,200, n1);
+//        tp.addNode(200,200, n2);
+//        tp.addNode(350,200, n3);
+//        n1.send(n3, 1);
+//        new JViewer(tp);
 //        Thread.sleep(50000);
+        int a = 3;
+        int b = 3;
+        System.out.println(3==3);
     }
+
+
+    @Test
+    public void testCsv() throws InterruptedException {
+
+    }
+
 }
