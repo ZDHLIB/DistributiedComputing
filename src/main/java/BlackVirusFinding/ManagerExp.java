@@ -11,7 +11,7 @@ import utils.Output;
 import java.util.List;
 
 public class ManagerExp {
-    private final static Logger logger = LoggerFactory.getLogger(ManagerExp.class);
+//    private final static Logger logger = LoggerFactory.getLogger(ManagerExp.class);
     private static StatisticInfo statisticInfo = StatisticInfo.getInstance();
     private static String filePath = "./src/main/resources/Results/res.csv";
 
@@ -30,7 +30,7 @@ public class ManagerExp {
             greedyBasedFacade.startExplorer();
             return true;
         } else {
-            logger.info("Initial topology failed as there are some disconnected nodes");
+//            logger.info("Initial topology failed as there are some disconnected nodes");
             return false;
         }
     }
