@@ -53,6 +53,7 @@ public class GreedyBasedFacade {
         }
         if(node.getLeaderAgent().getProtectedNodes().isEmpty()){
             logger.info("No nodes will be destroyed by clones, finished!");
+            statisticInfo.reduceTERMINATE();
         } else {
             greedyBasedAgentOperatioin.eliminate(node);
         }
@@ -145,7 +146,7 @@ public class GreedyBasedFacade {
 
     public void dealWithLeaderAgent(BasicNode node){
         // Make sure shadowAgent has been here, then go to next node
-        if( node.getShadowAgent() != null ){
+        if( node.getShadowAgent() != null && !node.getLeaderAgent().getProtectedNodes().isEmpty()){
             node.getLeaderAgent().setCurrentNode(node);
             BasicNode protectNode = node.getLeaderAgent().getNextProtectNode();
             AbstractAgentOperatioin.send(node,protectNode, leaderAgent);
