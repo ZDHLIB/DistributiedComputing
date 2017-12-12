@@ -60,7 +60,7 @@ public class StatisticInfo {
         return res;
     }
 
-    private boolean checkTerminate(){
+    public static boolean checkTerminate(){
         if(TERMINATE <= 0){
             return true;
         }
