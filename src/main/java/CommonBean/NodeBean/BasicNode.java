@@ -1,7 +1,7 @@
 package CommonBean.NodeBean;
 
 import BlackVirusFinding.AbstractAgentOperatioin;
-import BlackVirusFinding.GreedyBasedFacade;
+import BlackVirusFinding.AlgorithmFacade;
 import CommonBean.Agents.*;
 import CommonBean.MyMessage;
 import CommonBean.StatisticInfo;
@@ -22,14 +22,14 @@ public class BasicNode extends Node {
     private LeaderAgent leaderAgent = null;
     private ShadowAgent shadowAgent = null;
     private ArrayList<BasicNode> rasidualNodes = new ArrayList<BasicNode>();
-    private GreedyBasedFacade greedyBasedFacade = null;
+    private AlgorithmFacade algorithmFacade = null;
     private StatisticInfo statisticInfo = StatisticInfo.getInstance();
 
     @Override
     public void onStart() {
         // initialize the node variables
-        if(greedyBasedFacade == null) {
-            greedyBasedFacade = new GreedyBasedFacade();
+        if(algorithmFacade == null) {
+            algorithmFacade = new AlgorithmFacade();
         }
         setSize(15);
         setIcon("/imgs/"+getID()+".png");
@@ -59,25 +59,25 @@ public class BasicNode extends Node {
         if( obj instanceof Integer ){
             Integer data = (Integer) obj;
             logger.info("{} receives visited from {}", getID(), data);
-            greedyBasedFacade.dealWithInteger(this, data);
+            algorithmFacade.dealWithInteger(this, data);
         }
         // Receive explorerAgent, check whether I have been visited or not
         else if( obj instanceof ExporerAgent ){
             logger.info("{} receives ExporerAgent from {}", getID(), message.getSender());
             ExporerAgent exporerAgent = (ExporerAgent) obj;
-            greedyBasedFacade.dealWithExplorerAgent(this, exporerAgent);
+            algorithmFacade.dealWithExplorerAgent(this, exporerAgent);
         }
         // Receive black virus's clone
         else if( obj instanceof BlackVirusAgent){
             logger.info("{} receives BlackVirusAgent from {}", getID(), message.getSender());
             BlackVirusAgent blackVirusAgent = (BlackVirusAgent) obj;
-            greedyBasedFacade.dealWithBlackClonesAgent(this, blackVirusAgent);
+            algorithmFacade.dealWithBlackClonesAgent(this, blackVirusAgent);
         }
         // Receive shadowAgent
         else if( obj instanceof ShadowAgent ){
             logger.info("{} receives ShadowAgent from {}", getID(), message.getSender());
             ShadowAgent shadowAgent = (ShadowAgent) obj;
-            greedyBasedFacade.dealWithShadowAgent(this, shadowAgent);
+            algorithmFacade.dealWithShadowAgent(this, shadowAgent);
         }
         // Receive leaderAgent
         else if( obj instanceof LeaderAgent ){
@@ -85,7 +85,7 @@ public class BasicNode extends Node {
             statisticInfo.addNO_MOVES_LEADER();
             logger.info("{} receives LeaderAgent from {}", getID(), message.getSender());
             setLeaderAgent(LeaderAgent.getInstance());
-            greedyBasedFacade.dealWithLeaderAgent(this);
+            algorithmFacade.dealWithLeaderAgent(this);
         }
     }
 
@@ -94,7 +94,7 @@ public class BasicNode extends Node {
         //I am a initiator, startExplorer the algorithm
         if(getID() == 0){
             //TODO
-            greedyBasedFacade.startExplorer();
+            algorithmFacade.startExplorer();
             AbstractAgentOperatioin.sendVisited2Neighbours(this, this.getNeighbors());
         }
     }
