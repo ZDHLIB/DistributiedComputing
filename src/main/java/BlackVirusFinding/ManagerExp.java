@@ -4,8 +4,6 @@ import CommonBean.NodeBean.BasicNode;
 import CommonBean.StatisticInfo;
 import jbotsim.Node;
 import jbotsim.Topology;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import utils.Output;
 
 import java.util.List;
@@ -15,19 +13,20 @@ public class ManagerExp {
     private static StatisticInfo statisticInfo = StatisticInfo.getInstance();
     private static String filePath = "./src/main/resources/Results/res.csv";
 
-    public static void start(Integer nodeNo, String path){
+    public static void start(Integer nodeNo, String path, String type){
         filePath = path;
+        statisticInfo.setType(type);
         while( !startRound(nodeNo) ){}
     }
 
     private static boolean startRound(Integer NodesNo){
-        GreedyBasedFacade greedyBasedFacade = new GreedyBasedFacade();
+        AlgorithmFacade algorithmFacade = new AlgorithmFacade();
         Topology tp = Initiator.initTopology(NodesNo,600,600,true, BasicNode.class);
         // initial success;
         if( tp != null ){
             BasicNode sink = getSinkNode(tp);
             AbstractAgentOperatioin.sendVisited2Neighbours(sink, sink.getNeighbors());
-            greedyBasedFacade.startExplorer();
+            algorithmFacade.startExplorer();
             return true;
         } else {
 //            logger.info("Initial topology failed as there are some disconnected nodes");

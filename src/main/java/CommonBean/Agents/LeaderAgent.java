@@ -16,6 +16,7 @@ public class LeaderAgent extends Agent {
     private BasicNode target = null;
     private BasicNode currentNode = null;
     private Topology tp = null;
+    private static Integer threshold = 0;
     private HashMap<BasicNode, ArrayList<BasicNode> > hop2Info = new HashMap<BasicNode, ArrayList<BasicNode> >();
     private ArrayList<ShadowAgent>  shadowPosition = new ArrayList<ShadowAgent>();
     private Queue<BasicNode> protectedNodes = new LinkedList<BasicNode>();
@@ -163,5 +164,13 @@ public class LeaderAgent extends Agent {
 
     public void setTp(Topology tp) {
         this.tp = tp;
+    }
+
+    public static Integer getThreshold() {
+        return threshold;
+    }
+
+    public static void setThreshold(Integer threshold) {
+        LeaderAgent.threshold = threshold;
     }
 }

@@ -8,6 +8,9 @@ import java.util.UUID;
 public class StatisticInfo {
     private static StatisticInfo ourInstance = null;
 
+    // "0": greedy based, "1": threshold based
+    private static String type = "0";
+
     //Data fields
     private static Integer NO_MOVES = 0;
     private static Integer NO_MOVES_LEADER = 0;
@@ -97,5 +100,13 @@ public class StatisticInfo {
 
     public static void setTERMINATE(Integer TERMINATE) {
         StatisticInfo.TERMINATE = TERMINATE;
+    }
+
+    public static String getType() {
+        return type;
+    }
+
+    public static void setType(String type) {
+        StatisticInfo.type = type;
     }
 }
