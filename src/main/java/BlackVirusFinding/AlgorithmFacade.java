@@ -10,20 +10,26 @@ import org.slf4j.LoggerFactory;
 
 import java.util.*;
 
-public class GreedyBasedFacade {
+public class AlgorithmFacade {
 
-    private final static Logger logger = LoggerFactory.getLogger(GreedyBasedFacade.class);
+    private final static Logger logger = LoggerFactory.getLogger(AlgorithmFacade.class);
 
     private LeaderAgent leaderAgent = LeaderAgent.getInstance();
     private StatisticInfo statisticInfo = StatisticInfo.getInstance();
     private GreedyBasedAgentOperatioin greedyBasedAgentOperatioin = new GreedyBasedAgentOperatioin();
+    private ThresholdBasedAgentOperatioin thresholdBasedAgentOperatioin = new ThresholdBasedAgentOperatioin();
 
     /**
      * Start one iteration of the greedy based algorithm
      */
     public void startExplorer(){
+        ArrayList<BasicNode> pair = null;
         //1. Choose target
-        ArrayList<BasicNode> pair = greedyBasedAgentOperatioin.chooseTarget();
+        if(statisticInfo.getType().equals("0")) {
+            pair = greedyBasedAgentOperatioin.chooseTarget();
+        }else {
+            pair = thresholdBasedAgentOperatioin.chooseTarget();
+        }
         BasicNode source = pair.get(0);
         BasicNode target = pair.get(1);
         leaderAgent.setTarget(target);
