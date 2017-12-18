@@ -9,9 +9,7 @@ import jbotsim.Topology;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Random;
+import java.util.*;
 
 public class Initiator {
 
@@ -72,7 +70,6 @@ public class Initiator {
         initResidualDegree(tp);
 
         statisticInfo.setNoEdges(tp.getLinks().size());
-        statisticInfo.setNoNodes(tp.getNodes().size());
 
         logger.info("Initial topology finished. Sink: 0, blackVirus: {}", blackVirusNode);
         return tp;
@@ -125,7 +122,7 @@ public class Initiator {
      * @return
      */
     private static double calRange(double baseRange){
-        return baseRange / Math.sqrt(2);
+        return 0.5*baseRange / Math.sqrt(2);
     }
 
     /**
@@ -135,11 +132,28 @@ public class Initiator {
      */
     private static boolean checkConn(Topology tp){
         List<Node> nodes = tp.getNodes();
-        for(Node node : nodes){
-            if( node.getLinks().size() == 0 )
-                return false;
+        Queue<Node> queue = new LinkedList<>();
+        int[] flag = new int[nodes.size()];
+        int size = 1;
+
+        queue.offer(nodes.get(0));
+        flag[nodes.get(0).getID()] = 1;
+        while(!queue.isEmpty()){
+            Node node = queue.poll();
+            List<Node> neigbs = node.getNeighbors();
+            for(Node n : neigbs){
+                if( flag[n.getID()] != 1 ) {
+                    queue.offer(n);
+                    size++;
+                    flag[n.getID()] = 1;
+                }
+            }
         }
-        return true;
+
+        if( size == nodes.size()) {
+            return true;
+        }
+        return false;
     }
 
 
