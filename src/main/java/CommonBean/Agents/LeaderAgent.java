@@ -58,6 +58,12 @@ public class LeaderAgent extends Agent {
             exploredMap.add(node);
     }
 
+    public void deleteExploredNode(BasicNode node){
+        if(exploredMap.contains(node)){
+            exploredMap.remove(node);
+        }
+    }
+
     /**
      * update frontiers
      * @param node
