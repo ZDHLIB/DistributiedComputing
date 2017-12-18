@@ -44,7 +44,7 @@ public abstract class AbstractAgentOperatioin {
         for(Node n : neighbours){
             BasicNode bn = (BasicNode) n;
             MyMessage mm = new MyMessage(node.getID(), null);
-            node.send(bn, mm);
+            node.sendRetry(bn, mm);
         }
     }
 
@@ -58,25 +58,23 @@ public abstract class AbstractAgentOperatioin {
         Queue<BasicNode> route = new LinkedList<BasicNode>();
         ArrayList<BasicNode> map = leaderAgent.getExploredMap();
         Topology tp = leaderAgent.getTp();
-        int size = tp.getNodes().size();
-        int[][] mat = new int[size][size];
+        int size = map.size();
+        double[][] mat = new double[size][size];
         BasicNode[][] path = new BasicNode[size][size];
 
+        //Generate adjacent matrix
         for(int i = 0; i < size; i++){
             for(int j = 0; j < size; j++){
-                mat[i][j] = size * 2;
+                if( isNeighbour(map.get(i),map.get(j)) ){
+                    mat[i][j] = map.get(i).distance(map.get(j));
+                    path[i][j] = map.get(j);
+                }else{
+                    mat[i][j] = Double.MAX_VALUE;
+                    path[i][j] = null;
+                }
             }
         }
 
-        //Generate adjacent matrix
-        for(BasicNode node : map){
-            mat[node.getID()][node.getID()] = 1;
-            for( Node node1 : node.getNeighbors()){
-                BasicNode n = (BasicNode) node1;
-                mat[node.getID()][n.getID()] = 1;
-                path[node.getID()][n.getID()] = n;
-            }
-        }
 
         for (int k = 0; k < size; ++k) {
             for (int v = 0; v < size; ++v) {
@@ -89,14 +87,27 @@ public abstract class AbstractAgentOperatioin {
             }
         }
 
-        int k = path[source][dest].getID();
-        BasicNode kNode = path[source][dest];
-        while(k!=dest){
+        int id_s = getIdinMap(source);
+        int id_d = getIdinMap(dest);
+        Integer k = path[id_s][id_d].getID();
+        BasicNode kNode = path[id_s][id_d];
+        while(!k.equals(dest)){
+            id_s = getIdinMap(k);
             route.offer(kNode);
-            k = path[k][dest].getID();
-            kNode = path[k][dest];
+            kNode = path[id_s][id_d];
+            k = kNode.getID();
         }
         return route;
+    }
+
+    private static int getIdinMap(int id){
+        ArrayList<BasicNode> map = leaderAgent.getExploredMap();
+        for(int i = 0; i < map.size(); i++){
+            if(map.get(i).getID() == id){
+                return i;
+            }
+        }
+        return 0;
     }
 
     public static boolean isNeighbour(BasicNode source, BasicNode dest){
@@ -122,7 +133,7 @@ public abstract class AbstractAgentOperatioin {
             path.add(target);
             logger.info("Sending path:{}", path);
             MyMessage mm = new MyMessage(obj,path);
-            source.send(path.poll(), mm);
+            source.sendRetry(path.poll(), mm);
         }
     }
 
