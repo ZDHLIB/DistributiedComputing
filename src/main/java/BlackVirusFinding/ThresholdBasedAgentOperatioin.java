@@ -53,12 +53,16 @@ public class ThresholdBasedAgentOperatioin extends AbstractAgentOperatioin {
             for(BasicNode node : sourceResidual){
                 int tmpSize = node.getRasidualNodes().size();
                 if( tmpSize <= leaderAgent.getThreshold()){
+                    node.setExplored(true);
+                    leaderAgent.addNewNode(node);
                     int tempDis = findNearestPath(leaderAgent.getCurrentNode().getID(), node.getID()).size();
                     if(tempDis < dis){
                         res.set(0,tmpSource);
                         res.set(1,node);
                         dis = tempDis;
                     }
+                    node.setExplored(false);
+                    leaderAgent.deleteExploredNode(node);
                 }
             }
         }
