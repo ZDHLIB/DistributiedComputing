@@ -2,6 +2,7 @@ package CommonBean.NodeBean;
 
 import BlackVirusFinding.AbstractAgentOperatioin;
 import BlackVirusFinding.AlgorithmFacade;
+import BlackVirusFinding.ManagerExp;
 import CommonBean.Agents.*;
 import CommonBean.MyMessage;
 import CommonBean.StatisticInfo;
@@ -93,9 +94,10 @@ public class BasicNode extends Node {
     public void onSelection() {
         //I am a initiator, startExplorer the algorithm
         if(getID() == 0){
-            //TODO
-            algorithmFacade.startExplorer();
-            AbstractAgentOperatioin.sendVisited2Neighbours(this, this.getNeighbors());
+//            //TODO
+//            algorithmFacade.startExplorer();
+//            AbstractAgentOperatioin.sendVisited2Neighbours(this, this.getNeighbors());
+            ManagerExp.start(statisticInfo.getNoNodes(), ManagerExp.getFilePath(), statisticInfo.getType());
         }
     }
 
