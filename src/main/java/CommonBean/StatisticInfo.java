@@ -19,6 +19,8 @@ public class StatisticInfo {
     private static Integer NO_NODES = 0;
     private static Integer TERMINATE = 0;
 
+    private static Long startTime = new Long(0);
+    private static Long endTime = new Long(0);
 
     public static StatisticInfo getInstance() {
         if( ourInstance == null ){
@@ -94,12 +96,44 @@ public class StatisticInfo {
         NO_SHADOWS = noShadows;
     }
 
+    public static Integer getNoMoves() {
+        return NO_MOVES;
+    }
+
+    public static void setNoMoves(Integer noMoves) {
+        NO_MOVES = noMoves;
+    }
+
+    public static Integer getNoMovesLeader() {
+        return NO_MOVES_LEADER;
+    }
+
+    public static void setNoMovesLeader(Integer noMovesLeader) {
+        NO_MOVES_LEADER = noMovesLeader;
+    }
+
     public static Integer getTERMINATE() {
         return TERMINATE;
     }
 
     public static void setTERMINATE(Integer TERMINATE) {
         StatisticInfo.TERMINATE = TERMINATE;
+    }
+
+    public static Long getStartTime() {
+        return startTime;
+    }
+
+    public static void setStartTime(Long startTime) {
+        StatisticInfo.startTime = startTime;
+    }
+
+    public static Long getEndTime() {
+        return endTime;
+    }
+
+    public static void setEndTime(Long endTime) {
+        StatisticInfo.endTime = endTime;
     }
 
     public static String getType() {
