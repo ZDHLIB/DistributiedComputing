@@ -106,7 +106,7 @@ public class AlgorithmFacade {
 
     public void dealWithBlackClonesAgent(BasicNode node, BlackVirusAgent blackVirusAgent){
         // I have been protected by shadowAgent
-        if( node.getShadowAgent() != null ){
+        if( node.getShadowAgent() != null && node.getLeaderAgent() == null ){
             logger.info("{} has shadowAgent, deactivate receiving clone", node.getID());
             blackVirusAgent.setActivate(false);
         }
